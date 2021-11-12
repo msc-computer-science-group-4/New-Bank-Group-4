@@ -58,6 +58,13 @@ public class NewBank {
 				Everything after the blank symbol is part of the account name. */
 				String accountName = request.split(" ", 2)[1];
 
+				/* account names should not be allowed to have a blank symbol in them. This is because it leads
+				to problems when splitting the string in the MOVE command (It won't be clear if a word belongs to the
+				 fromAccount or the toAccount*/
+				if(accountName.contains(" ")){
+					return "Account names are not allowed to contain blank symbols.";
+				}
+
 				// guard against too short or too long account name.
 				if (accountName.length() < 2 || accountName.length() > 20){
 					return "Please retry enter between 2 and 20 characters for your account name.";
