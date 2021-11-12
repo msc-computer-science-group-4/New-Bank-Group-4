@@ -40,9 +40,29 @@ public class NewBank {
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
 		if(customers.containsKey(customer.getKey())) {
-			switch(request) {
-			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
-			default : return "FAIL";
+			/* I replaced the switch cases with if statements to verify certain conditions for the input String,
+			   which I think is easier with if statements.*/
+			if (request.equals("SHOWMYACCOUNTS")) {
+				return showMyAccounts(customer);
+			}
+
+			// NEWACCOUNT request: First verifies if the request starts with NEWACCOUNT followed by a blank symbol.
+			else if (request.startsWith("NEWACCOUNT ")) {
+				/* splits the user input into a list at the first occurrence of a blank symbol.
+				Everything after the blank symbol is part of the account name. */
+				String accountName = request.split(" ", 2)[1];
+
+				// guard against too short or too long account name.
+				if (accountName.length() < 2 || accountName.length() > 20){
+					return "Please retry enter between 2 and 20 characters for your account name.";
+				}
+				// retrieve Customer object for current customer and create a new account with an opening balance of 0.
+				Customer currentCustomer = customers.get(customer.getKey());
+				currentCustomer.addAccount(new Account(accountName, 0));
+
+				// return success message containing new account name and balance.
+				return "Successfully opened the account " + "\"" + accountName + "\"" + " with an initial balance 0f 0.";
+
 			}
 		}
 		return "FAIL";
