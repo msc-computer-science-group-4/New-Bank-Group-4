@@ -9,6 +9,9 @@ A repository created to store the code and version control the New Bank banking 
 #### Group Members:
 
 [Lorenz Saxler](https://github.com/lorenzsaxler)
+
 [Mahtab Bahman Nejad](https://github.com/mahtabnejad90)
+
 [Veronika Vysokozerskaia](https://github.com/matiek8)
+
 [Rachel Berryman](https://github.com/rachelkberryman)
