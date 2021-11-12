@@ -15,3 +15,11 @@ A repository created to store the code and version control the New Bank banking 
 [Veronika Vysokozerskaia](https://github.com/matiek8)
 
 [Rachel Berryman](https://github.com/rachelkberryman)
+
+# Tech Stack
+
+- Java - Programming Language
+- IntelliJ - IDE
+- Trello - Agile Project Management Board
+- GitHub - Version Control
+- Slack - Communication & Collaberation Tool
