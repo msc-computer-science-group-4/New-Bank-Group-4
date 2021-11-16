@@ -6,7 +6,7 @@ import java.util.*;
 public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
-	private HashMap<String,Customer> customer;
+	private HashMap<String,Customer> customers;
 	
 	private NewBank() {
 		customers = new HashMap<>();
