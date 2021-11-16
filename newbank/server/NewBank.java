@@ -47,6 +47,8 @@ public class NewBank {
 			switch(input.get(0)) {
 				case "1" : return showMyAccounts(customer);
 				case "2" : return createNewAccount(customer, request);
+        case "3" : return closeAccount(customer, request);
+        case "4" : return move(customer, request);
 				case "DISPLAYSELECTABLEACCOUNTS" : return displaySelectableAccounts(customer);
 				default : return "FAIL";
 
