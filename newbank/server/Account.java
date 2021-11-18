@@ -1,22 +1,22 @@
-
+package newbank.server;
 public class Account {
 	String accountName;
 	double openingBalance;
 
-	public Account(String username, double amount) {
-		this.accountName = username;
+	public Account(String account, double amount) {
+		this.accountName = account;
 		this.openingBalance = amount;
-	}
-
-	public String getAccountName() {
-		return accountName;
 	}
 
 	public double getOpeningBalance() {
 		return openingBalance;
 	}
 
-	//withdraw money
+	public String getAccountName() {
+		return accountName;
+	}
+
+	//withdraw funds
 	public boolean withdraw(double w)
 	{
 		if(w<=openingBalance)
