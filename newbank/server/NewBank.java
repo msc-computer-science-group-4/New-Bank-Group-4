@@ -91,7 +91,7 @@ public class NewBank {
 	public synchronized String processAccountCreationRequest(String request) throws Exception {
 		List<String> input = Arrays.asList(request.split("\\s*,\\s*"));
 		switch(input.get(0)) {
-			case "CREATEACCOUNT" : return createLoginAccount(request);
+			case "ACCOUNCREATION" : return createLoginAccount(request);
 			default : return "FAIL";
 		}
 	}
