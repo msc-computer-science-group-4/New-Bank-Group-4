@@ -22,6 +22,9 @@ public class NewBankClientHandler extends Thread{
 	public void run() {
 		// keep getting requests from the client and processing them
 		try {
+			// creating and adding test user to the List as a first step
+			bank.addTestData();
+
 			clearScreen();
 			out.println("Welcome to the New Bank Main Menu\n\nYou can choose from the below options:\n");      // offer log in or create account
 			out.println("1. Sign In");

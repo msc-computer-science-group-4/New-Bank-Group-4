@@ -29,9 +29,7 @@ public class NewBank {
 		return "Account '" + accountType + "' Created.\n";
 	}
 
-	private void addTestData() {
-
-
+	public void addTestData() {
 		/*
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
@@ -43,13 +41,13 @@ public class NewBank {
 
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
-		customers.put("John", john);
-		*/
+		customers.put("John", john);*/
 
-		Customer bhagy = new Customer("Bhagy", "bhagytest", "test1234", "UK1233445654634");
-		bhagy.addAccount(new Account("Current", 1000.0));
-		bhagy.addAccount(new Account("Savings", 1500.0));
-		bhagy.addAccount(new Account("Checking", 250.0));
+		Customer test = new Customer("test", "testuser", "Test1234#", "UK1233445654634");
+		test.addAccount(new Account("Main", 1000.0));
+		test.addAccount(new Account("Savings", 1500.0));
+		test.addAccount(new Account("Checking", 250.0));
+		customers.put(test.getCustomerID().getUserName(), test);
 	}
 
 	public static NewBank getBank() {
