@@ -26,4 +26,4 @@ A repository created to store the code and version control the New Bank banking 
 
 Copyright to New Bank Skeleton Code: [University of Bath](bath.ac.uk)
 
-Code Owners of Further Implementations to skeleton code: [MSc Computer Science - Software Engineering 2 - Group 4](https://github.com/orgs/msc-computer-science-group-4/teams/group-4)
+Code Owners of Further Implementations to skeleton code: [MSc Computer Science - Software Engineering 2 - Group 4](https://github.com/orgs/msc-computer-science-group-4/teams/group-4/members)
