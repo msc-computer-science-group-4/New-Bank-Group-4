@@ -1,7 +1,6 @@
 package newbank.server;
 
 public class CustomerID {
-	private String key;
 	private CustomerID customerID;
 	private String Name;
 	private String userName;
@@ -10,10 +9,6 @@ public class CustomerID {
 
 	public CustomerID(String name, String userName, String password, String iban) {
 		this.Name = name; this.userName = userName; this.password = password; this.IBAN = iban;
-	}
-	
-	public String getKey() {
-		return key;
 	}
 
 	public String getName() {

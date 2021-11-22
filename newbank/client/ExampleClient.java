@@ -42,7 +42,8 @@ public class ExampleClient extends Thread{
 			try {
 				while(true) {
 					String command = userInput.readLine();
-					if(command.equals("EXIT")){
+					if(command.equals("10")){
+						System.out.println("Thank you and have a nice day!");
 						System.exit(0);
 					}
 					else{
