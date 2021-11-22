@@ -24,4 +24,6 @@ A repository created to store the code and version control the New Bank banking 
 - GitHub - Version Control
 - Slack - Communication & Collaberation Tool
 
-Copyright of Skeleton Code: https://github.bath.ac.uk/
+Copyright to New Bank Skeleton Code: [University of Bath](bath.ac.uk)
+
+Code Owners of Further Implementations to skeleton code: [MSc Computer Science - Software Engineering 2 - Group 4](https://github.com/orgs/msc-computer-science-group-4/teams/group-4)
