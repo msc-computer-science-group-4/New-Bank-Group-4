@@ -23,3 +23,5 @@ A repository created to store the code and version control the New Bank banking 
 - Trello - Agile Project Management Board
 - GitHub - Version Control
 - Slack - Communication & Collaberation Tool
+
+Copyright of Skeleton Code: https://github.bath.ac.uk/
