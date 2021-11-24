@@ -374,11 +374,6 @@ public class NewBankClientHandler extends Thread{
 	}
 
 	private String selectAccount(CustomerID customer) throws Exception {
-		/* There is an issue with this Method, it always returns null.  have tried multiple things but am not entirely
-		sure how to fix it. The problem occurs after the while(b) loop, when determining the accountName string.
-		Something is wrong with the indexing.
-		 */
-
 		//out.println("Enter the Account that you want to transfer from:  ");
 		String selectableAccounts = bank.processRequest(customer, "DISPLAYSELECTABLEACCOUNTS");
 		String option = "";
@@ -402,10 +397,11 @@ public class NewBankClientHandler extends Thread{
 			}
 		}
 		// Retrieve selected account name
-		String accountName = listOfSelections[Integer.parseInt(option)-1].substring(
-				selectableAccounts.indexOf(". "));
+		String request = "DISPLAYSELECTEDNAMEACCOUNT, " + (Integer.parseInt(option)-1);
+		String selectedAccountName = bank.processRequest(customer, request);
 
-		return accountName.substring(accountName.indexOf(" ")+1);
+		System.out.println("accountName " + selectedAccountName);
+		return selectedAccountName;
 	}
 
 }
