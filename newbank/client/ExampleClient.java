@@ -42,7 +42,10 @@ public class ExampleClient extends Thread{
 			try {
 				while(true) {
 					String command = userInput.readLine();
-					if(command.equals("EXIT")){
+					/* the 10 refers to the menu number for Exiting (value needs to be adjusted when more items are
+					added to the menu!. */
+					if(command.equals("10")){
+						System.out.println("Thank you and have a nice day!");
 						System.exit(0);
 					}
 					else{

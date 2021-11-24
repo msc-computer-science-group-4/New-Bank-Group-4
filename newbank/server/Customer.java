@@ -37,7 +37,7 @@ public class Customer {
 	// Return the list of accounts of a customer as a string
 	public String accountsToString() {
 		String accountNameHeading = "Account Name";
-		String openingBalanceHeading = "Opening Balance";
+		String currentBalanceHeading = "Current Balance";
 		String uniqueIBAN = "IBAN: " + customerID.getIBAN();
 		String s = ""; // the output variable of this function
 
@@ -55,7 +55,7 @@ public class Customer {
 				accountNameHeading += " ";
 			}
 		}
-		s += accountNameHeading+"        "+openingBalanceHeading+"        "+uniqueIBAN+"\n";
+		s += accountNameHeading+"        "+currentBalanceHeading+"        "+uniqueIBAN+"\n";
 
 		// Divider
 		int dividerLength = s.length();
@@ -72,7 +72,7 @@ public class Customer {
 				s += " ";
 			}
 			s += "        ";
-			s += a.getOpeningBalance();
+			s += a.getCurrentBalance();
 			s += "\n";
 			counter+=1;
 		}

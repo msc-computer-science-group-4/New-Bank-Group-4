@@ -1,15 +1,15 @@
 package newbank.server;
 public class Account {
 	String accountName;
-	double openingBalance;
+	double currentBalance;
 
 	public Account(String account, double amount) {
 		this.accountName = account;
-		this.openingBalance = amount;
+		this.currentBalance = amount;
 	}
 
-	public double getOpeningBalance() {
-		return openingBalance;
+	public double getCurrentBalance() {
+		return currentBalance;
 	}
 
 	public String getAccountName() {
@@ -19,9 +19,9 @@ public class Account {
 	//withdraw funds
 	public boolean withdraw(double w)
 	{
-		if(w<=openingBalance)
+		if(w<= currentBalance)
 		{
-			openingBalance=openingBalance-w;
+			currentBalance = currentBalance -w;
 			return true;
 		}
 		else
@@ -29,20 +29,20 @@ public class Account {
 	}
 
 	public void setAmount(double amount) {
-		this.openingBalance = amount;
+		this.currentBalance = amount;
 	}
 	//deposit into the account
 	public void deposit(double d)
 	{
-		openingBalance=openingBalance+d;
+		currentBalance = currentBalance +d;
 	}
 	//transfer from current account to the account passed.
 	public void transfer(Account acc, double amount)
 	{
-		if(amount<=this.openingBalance)
+		if(amount<=this.currentBalance)
 		{
-			acc.setAmount(acc.getOpeningBalance()+amount);
-			this.openingBalance-=amount;
+			acc.setAmount(acc.getCurrentBalance()+amount);
+			this.currentBalance -=amount;
 			System.out.println("Amount transferred successfully.");
 		}
 		else

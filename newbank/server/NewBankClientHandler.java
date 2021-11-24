@@ -22,6 +22,9 @@ public class NewBankClientHandler extends Thread{
 	public void run() {
 		// keep getting requests from the client and processing them
 		try {
+			// creating and adding test user to the List as a first step
+			bank.addTestData();
+
 			clearScreen();
 			out.println("Welcome to the New Bank Main Menu\n\nYou can choose from the below options:\n");      // offer log in or create account
 			out.println("1. Sign In");
@@ -34,9 +37,9 @@ public class NewBankClientHandler extends Thread{
 				customerAction = in.readLine();
 			}
 			if (customerAction.equals("2")) {
-				out.println("Enter Your Name Please?");
+				out.println("Please enter your name:");
 				String customerName = in.readLine();
-				out.println("Enter an available username:");
+				out.println("Please choose a username:");
 				String userName = in.readLine();
 				out.println("Create a password:");
 				String password = in.readLine();
@@ -44,34 +47,45 @@ public class NewBankClientHandler extends Thread{
 				String request = "ACCOUNTCREATION" + "," + customerName + "," + userName + "," + password;
 				String response = bank.processAccountCreationRequest(request);
 				out.println(response);          // direct to account creation where they will be able to choose a username and continue
-				while(response == "Weak password choice, please re-enter a stronger password:"){
+				// if response starts with "Password" it means that a password error message was returned, so try again
+				while(response.startsWith("Password ")){
 					password = in.readLine();
 					request = "ACCOUNTCREATION" + "," + customerName + "," + userName + "," + password;
 					response = bank.processAccountCreationRequest(request);
 					out.println(response);
 				}
 
-				while (response == "The username already exists.\nPlease enter a unique username or type 'esc' to return to the menu screen.") {
+				while (response.equals("The username already exists.\nPlease enter a unique username or type 'esc'" +
+						" to return to the menu screen.")) {
 					userName = in.readLine();
-					if (userName.equals("esc")){
+					// capitalized the esc to also allow for Esc, ESC etc..
+					if (userName.equalsIgnoreCase("ESC")){
 						out.println("Loading menu screen...\n");
 						sleep();
 						break;
+					} else {
+						// process account creation request with new chosen username
+						String newRequest = "ACCOUNTCREATION" + "," + customerName + "," + userName + "," + password;
+						// get response for new request
+						response = bank.processAccountCreationRequest(newRequest);
+						out.println(response);
 					}
 				}
-				if (!userName.equals("esc")) {
+				// If username chosen was unique, and Esc was not requested then inform user about success
+				if (!userName.equalsIgnoreCase("ESC")) {
 					clearScreen();
 					out.println("User: '" + userName + "' Created\n");
 					out.println("MENU LOADING...\n");
 					sleep();
 					run();
-				} else if (userName.equals("esc")){
+				} else { // if user typed Esc rerun thread
 					out.println("MENU LOADING...\n");
 					sleep();
 					run();
 				}
 
 			}
+			// Logging In for existing user:
 			if (customerAction.equals("1")) {
 				clearScreen();
 				// Requests existing username
@@ -107,31 +121,41 @@ public class NewBankClientHandler extends Thread{
 					returnToMenu();
 				} else if(request.equals("2")){
 					clearScreen();
-					out.println("Enter the Name of the customer who's receiving the funds: ");
+					out.println("Enter the username of the customer who is receiving the funds: ");
 					String receiver = in.readLine();
+					// added a check for existence of customer to transfer to
+					boolean isCustomer = false;
+					while(!isCustomer){
+						if(bank.getCustomers().containsKey(receiver)){
+							isCustomer = true;
+						}else{
+							out.println("Please enter a valid username!");
+							receiver = in.readLine();
+						}
+					}
 
-					out.println("Enter the IBAN of the customer who's receiving the funds: ");
+					out.println("Enter the IBAN of the customer Account which is receiving the funds: ");
 					String iban = in.readLine();
 
-					out.println("Enter the Amount you'de like to transfer:  ");
-					String transfarableSum = in.readLine();
+					out.println("Enter the Amount you would like to transfer:  ");
+					String transferableSum = in.readLine();
 
 					boolean valid = false;
 					while(!valid){
 						try{
-							int check = Integer.parseInt(transfarableSum);
+							int check = Integer.parseInt(transferableSum);
 							valid = true;
 						}catch (NumberFormatException ex) {
 							out.println("Amount is invalid, please try again.\n");
-							out.println("Enter the Amount you'de like to transfer:  ");
-							transfarableSum = in.readLine();
+							out.println("Enter the Amount you would like to transfer:  ");
+							transferableSum = in.readLine();
 						}
 					}
 
-					out.println("Enter the Account that you want to transfer from:  ");
-					String accountName = SelectAccount(customer);
+					out.println("Enter the number next to the name of the Account you would like to transfer from:  ");
+					String accountName = selectAccount(customer);
 
-					request += "," + receiver + "," + iban + "," + transfarableSum + "," + accountName + ",";
+					request += "," + receiver + "," + iban + "," + transferableSum + "," + accountName + ",";
 
 					String response = bank.processRequest(customer, request);
 					out.println(response);
@@ -140,30 +164,30 @@ public class NewBankClientHandler extends Thread{
 				} else if (request.equals("3")){
 					clearScreen();
 					out.println("Enter the Account that you want to transfer from:  ");
-					String account_from = SelectAccount(customer);
+					String account_from = selectAccount(customer);
 
 					out.println("Enter the Account that you want to transfer to:  ");
-					String account_to = SelectAccount(customer);
+					String account_to = selectAccount(customer);
 
 					out.println("Enter the Amount to transfer:  ");
-					String transfarableSum = in.readLine();
+					String transferableSum = in.readLine();
 
 					boolean valid = false;
 					while(!valid){
 						try{
-							int check = Integer.parseInt(transfarableSum);
+							int check = Integer.parseInt(transferableSum);
 							valid = true;
 						}catch (NumberFormatException ex) {
 							out.println("Invalid input, please try again.\n");
 							out.println("Enter the Amount to transfer:  ");
-							transfarableSum = in.readLine();
+							transferableSum = in.readLine();
 						}
 					}
 
 					out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
 					String authNumber = in.readLine();
 
-					request += "," + account_from + "," + account_to + "," + transfarableSum + "," + authNumber;
+					request += "," + account_from + "," + account_to + "," + transferableSum + "," + authNumber;
 
 					String response = bank.processRequest(customer, request);
 					out.println(response);
@@ -273,17 +297,28 @@ public class NewBankClientHandler extends Thread{
 
 					response = bank.processRequest(customer, request);
 					out.println(response);
-				} else if (request.equals("8")) {
+
+				} else if (request.equals("8")){ // Adding funds to an Account
+					out.println("Please enter the number next to the name of the Account you would like to " +
+							"add funds to: ");
+					/* there currently is a null response problem with the selectAccount method. It thus does not return
+					a value. Before this command can be implemented, the selectAccount() method needs to be fixed */
+
+					//selectAccount(customer);
+
+
+
+
+				}
+				else if (request.equals("9")) {
 					clearScreen();
 					out.println("Logging out...");
 					sleep();
 					run();
-				} else if (request.equals("9")){
-					clearScreen();
-					out.println("Thank you and have a nice day!");
-					System.exit(0);
 				}
-				else if(!request.equalsIgnoreCase("10")) {
+				/* I moved command "10" to the ExampleClient class to prevent errors being thrown when exiting the
+				system (which happens when exiting in this class) */
+				else if(!request.equalsIgnoreCase("11")) {
 					clearScreen();
 					out.println("Invalid Entry\n");
 				} else {
@@ -316,8 +351,9 @@ public class NewBankClientHandler extends Thread{
 				"3. Transfer to another owned account\n" +
 				"4. Create New Account\n" +
 				"5. Close an Account\n" +
-				"6. Log out\n" +
-				"7. Quit\n";
+				"8. Add Funds to an Account\n" +
+				"9. Log out\n" +
+				"10. Quit\n";
 	}
 
 	public void clearScreen() {
@@ -337,7 +373,12 @@ public class NewBankClientHandler extends Thread{
 		Thread.sleep(3000);
 	}
 
-	private String SelectAccount(CustomerID customer) throws Exception {
+	private String selectAccount(CustomerID customer) throws Exception {
+		/* There is an issue with this Method, it always returns null.  have tried multiple things but am not entirely
+		sure how to fix it. The problem occurs after the while(b) loop, when determining the accountName string.
+		Something is wrong with the indexing.
+		 */
+
 		//out.println("Enter the Account that you want to transfer from:  ");
 		String selectableAccounts = bank.processRequest(customer, "DISPLAYSELECTABLEACCOUNTS");
 		String option = "";
