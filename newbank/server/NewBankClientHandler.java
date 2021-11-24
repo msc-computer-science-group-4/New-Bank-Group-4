@@ -373,6 +373,10 @@ public class NewBankClientHandler extends Thread{
 		Thread.sleep(3000);
 	}
 
+	/**
+	 * This method displays a list of accounts of a specific customer,
+	 * reads the index of the selected account and returns the name of the selected account
+	 */
 	private String selectAccount(CustomerID customer) throws Exception {
 		//out.println("Enter the Account that you want to transfer from:  ");
 		String selectableAccounts = bank.processRequest(customer, "DISPLAYSELECTABLEACCOUNTS");
