@@ -85,6 +85,8 @@ public class NewBank {
 				case "1" :
 				case "DISPLAYSELECTABLEACCOUNTS" :
 					return showMyAccounts(customer);
+				case "DISPLAYSELECTEDNAMEACCOUNT":
+					return getSelectedAccountName(customer, Integer.parseInt(input.get(1)));
 				case "2" : return createNewAccount(customer, request);
 				default : return "FAIL";
 
@@ -189,4 +191,11 @@ public class NewBank {
 		return customers.get(customer.getUserName()).accountsToString();
 	}
 
+	/**
+	 * This method searches for the selected account by index and returns the name of the found account
+	 */
+	private String getSelectedAccountName(CustomerID customer, Integer accountIndex) {
+		ArrayList<Account> accounts = customers.get(customer.getUserName()).getAllAccounts();
+		return accounts.get(accountIndex).getAccountName();
+	}
 }
