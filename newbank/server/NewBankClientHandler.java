@@ -75,7 +75,7 @@ public class NewBankClientHandler extends Thread{
 				if (!userName.equalsIgnoreCase("ESC")) {
 					clearScreen();
 					out.println("User: '" + userName + "' Created\n");
-					out.println("MENU LOADING...\n");
+					out.println("Please login with your newly created user account...\n");
 					sleep();
 					run();
 				} else { // if user typed Esc rerun thread
