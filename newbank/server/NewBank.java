@@ -18,7 +18,7 @@ public class NewBank {
 		System.out.println(input.get(1));
 		String accountType = input.get(1);
 		double amount = Double.valueOf(input.get(2));
-		Customer thisCustomer = customers.get(customer.getIBAN());
+		Customer thisCustomer = customers.get(customer.getUserName());
 		if (accountType.equals("1")) {
 			accountType = "Current Account";
 		}
@@ -43,7 +43,7 @@ public class NewBank {
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);*/
 
-		Customer test = new Customer("test", "testuser", "Test1234#", "UK1233445654634");
+		Customer test = new Customer("test", "testuser", "Test1234#");
 		test.addAccount(new Account("Main", 1000.0));
 		test.addAccount(new Account("Savings", 1500.0));
 		test.addAccount(new Account("Checking", 250.0));
@@ -101,22 +101,11 @@ public class NewBank {
 		}
 	}
 
-	// Credit: https://github.com/arturmkrtchyan/iban4j
-	// Generates International Bank Account Numbers
-	public String generateIBAN() {
-		int accountNumber = 10000000;
-		Random ID = new Random();
-		accountNumber += ID.nextInt(90000000);
-		String IBAN = "GB24NWBK999999" + accountNumber;
-		return IBAN;
-	}
-
 	private String createLoginAccount(String request) {
 		List<String> input = Arrays.asList(request.split("\\s*,\\s*"));
 		String customerName = input.get(1);
 		String userName = input.get(2);
 		String password = input.get(3);
-		String iban = generateIBAN();
 
 		//Validate password
 		String passwordResponse = isValidPassword(password);
@@ -127,11 +116,13 @@ public class NewBank {
 			String output = "The username already exists.\nPlease enter a unique username or type 'esc' to return to the menu screen.";
 			return output;
 		} else {
-			Customer newCustomer = new Customer(customerName, userName, password, iban);       // create new customer
+			Customer newCustomer = new Customer(customerName, userName, password);       // create new customer
 			newCustomer.addAccount(new Account("Main", 00.0));    // create a default account for the customer
 			bank.customers.put(userName, newCustomer);        // add the customer to the list of customers and assign their username
+			Account newAccount = newCustomer.getAccount("Main");
+			String newIBAN = newAccount.getIBAN();
 			String output = "New user '" + userName + "' created.\n" +
-					"We also created an initial bank account:'Main' with the IBAN: " + iban + " for you.\n" +
+					"We also created an initial bank account:'Main' with the IBAN: " + newIBAN + " for you.\n" +
 					"Please Download the Google Authenticator App and use the key NY4A5CPJZ46LXZCP to set up your 2FA.";
 			return output;
 		}

@@ -1,15 +1,38 @@
 package newbank.server;
+import java.util.Random;
 public class Account {
 	String accountName;
 	double currentBalance;
+	String iban;
+	boolean ibanCreated;
 
 	public Account(String account, double amount) {
 		this.accountName = account;
 		this.currentBalance = amount;
+		this.ibanCreated = false;
+	}
+
+	// Credit: https://github.com/arturmkrtchyan/iban4j
+	// Generates International Bank Account Numbers
+	public String generateIBAN() {
+		int accountNumber = 10000000;
+		Random ID = new Random();
+		accountNumber += ID.nextInt(90000000);
+		String IBAN = "GB24NWBK999999" + accountNumber;
+		return IBAN;
 	}
 
 	public double getCurrentBalance() {
 		return currentBalance;
+	}
+
+	public String getIBAN() {
+		// if no IBAN has been created yet, creating one
+		if(this.ibanCreated == false){
+			generateIBAN();
+		}
+		// otherwise, returning the one that has already been created
+		return iban;
 	}
 
 	public String getAccountName() {
