@@ -1,10 +1,13 @@
 package newbank.server;
 public class Account {
+	// account type either "Current Account" or "Savings Account"
+	String accountType;
 	String accountName;
 	double currentBalance;
 
-	public Account(String account, double amount) {
-		this.accountName = account;
+	public Account(String accountType, String accountName, double amount) {
+		this.accountType = accountType;
+		this.accountName = accountName;
 		this.currentBalance = amount;
 	}
 
@@ -14,6 +17,10 @@ public class Account {
 
 	public String getAccountName() {
 		return accountName;
+	}
+
+	public String getAccountType() {
+		return accountType;
 	}
 
 	//withdraw funds
@@ -54,5 +61,9 @@ public class Account {
 
 	public void setAccountName(String name) {
 		this.accountName = name;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
 	}
 }

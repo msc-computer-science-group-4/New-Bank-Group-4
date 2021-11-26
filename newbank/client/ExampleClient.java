@@ -1,5 +1,8 @@
 package newbank.client;
 
+import newbank.server.NewBank;
+import newbank.server.NewBankServer;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -42,15 +45,7 @@ public class ExampleClient extends Thread{
 			try {
 				while(true) {
 					String command = userInput.readLine();
-					/* the 10 refers to the menu number for Exiting (value needs to be adjusted when more items are
-					added to the menu!. */
-					if(command.equals("10")){
-						System.out.println("Thank you and have a nice day!");
-						System.exit(0);
-					}
-					else{
-						bankServerOut.println(command);
-					}
+					bankServerOut.println(command);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
