@@ -1,8 +1,5 @@
 package newbank.client;
 
-import newbank.server.NewBank;
-import newbank.server.NewBankServer;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
