@@ -37,6 +37,7 @@ public class Customer {
 	// Return the list of accounts of a customer as a string
 	public String accountsToString() {
 		String accountNameHeading = "Account Name";
+		String accountTypeHeading = "Account Type";
 		String currentBalanceHeading = "Current Balance";
 		String uniqueIBAN = "IBAN: " + customerID.getIBAN();
 		String s = ""; // the output variable of this function
@@ -48,6 +49,13 @@ public class Customer {
 			}
 		}
 
+		int longestAccountTypeCount=accountTypeHeading.length();
+		for(Account a : accounts) {
+			if(a.getAccountType().length() > longestAccountTypeCount) {
+				longestAccountTypeCount = a.getAccountType().length();
+			}
+		}
+
 		// Header
 		if (accountNameHeading.length() < longestAccountNameCount) {
 			int difference = longestAccountNameCount-accountNameHeading.length();
@@ -55,7 +63,16 @@ public class Customer {
 				accountNameHeading += " ";
 			}
 		}
-		s += accountNameHeading+"        "+currentBalanceHeading+"        "+uniqueIBAN+"\n";
+
+		if (accountTypeHeading.length() < longestAccountTypeCount) {
+			int difference = longestAccountTypeCount-accountTypeHeading.length();
+			for(int i=0; i<difference; i++){
+				accountTypeHeading += " ";
+			}
+		}
+
+
+		s += accountNameHeading+"        "+accountTypeHeading+"        "+currentBalanceHeading+"        "+uniqueIBAN+"\n";
 
 		// Divider
 		int dividerLength = s.length();
@@ -68,9 +85,10 @@ public class Customer {
 		int counter = 1;
 		for(Account a : accounts) {
 			s += counter + "." + a.getAccountName();
-			for(int i=0;i<longestAccountNameCount-a.getAccountName().length();i++){
+			for(int i = 0; i<longestAccountNameCount-a.getAccountName().length(); i++){
 				s += " ";
 			}
+			s += "      " + a.getAccountType() + " ";
 			s += "        ";
 			s += a.getCurrentBalance();
 			s += "\n";
@@ -99,8 +117,11 @@ public class Customer {
 	}
 
 	// remove Account
-	public void closeAccount(Account account) {
+	public String closeAccount(Account account) {
+		String accountType = account.getAccountType();
+		String accountName = account.getAccountName();
 		accounts.remove(account);
+		return "Successfully closed the " + accountType + " '" + accountName + "'.";
 	}
 
 	// get number of accounts

@@ -1,6 +1,8 @@
 
 package newbank.server;
 
+import newbank.client.ExampleClient;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -198,40 +200,53 @@ public class NewBankClientHandler extends Thread{
 
 					// check if user has accounts to close
 					if (Integer.parseInt(bank.processRequest(customer, "NUMBEROFUSERACCOUNTS")) == 0) {
-						out.println("The user has no available accounts!\n");
+						out.println("You currently have no bank accounts under your name!\n");
 					} else if (Integer.parseInt(bank.processRequest(customer, "NUMBEROFUSERACCOUNTS")) == 1) {
 						// does not allow the user to close account if only one account remains
-						out.println("The user must have at least one bank account with New Bank!");
-					} else {
-						// show accounts
-						out.println(bank.processRequest(customer, "1"));
+						out.println("You currently only have one account under your name.");
+						out.println("You must have at least one bank account with New Bank!");
 
-						// get the chosen account to close
+					} else { // 2 or more accounts under the users name
+						// get the account to close
 						out.println("Select which account you wish to close (Type in the number on the left of the account name):\n");
-						String accountToClose = in.readLine();
-						request += "," + accountToClose;
+						String accountToClose = selectAccount(customer);
+						/* Only allow user to close account if balance is >= 0.
+						Decided to make a separate request so that the user does not have to go through all steps below and only
+						then receive the information that it failed because of a negative balance */
+						String accountBalanceRequest = "CHECKACCOUNTBALANCE" + "," + accountToClose;
 
-						String accountToTransferFundsTo;
+						double remainingBalance = Double.parseDouble(bank.processRequest(customer, accountBalanceRequest));
+						if (remainingBalance < 0) {
+							out.println("You cannot close an account with a negative balance!");
+						}
+						// Else if balance is 0, proceed to close the account without fund transferring
+						else if (remainingBalance == 0){
+							String closeAccountRequest = "CLOSEACCOUNT" + "," + accountToClose;
+							out.println(bank.processRequest(customer, closeAccountRequest));
+						}
 
-						// get the chosen account to transfer money to receiver
-						do {
-							clearScreen();
-							out.println(bank.processRequest(customer, "1"));
-							out.println("Select the bank account you would like to transfer the pending funds to:\n");
-							accountToTransferFundsTo = in.readLine();
-							if (accountToTransferFundsTo.equals(accountToClose)) {
-								out.println("Can't be the same amount!.\n");
+						else { // else if closing account has funds in it
+							out.println("Select which account you wish to transfer the accounts remaining funds to" +
+									" (Type in the number on the left of the account name):\n");
+							String accountToTransferFundsTo = selectAccount(customer);
+
+							// do not allow transferring to same account before closing
+							while (accountToTransferFundsTo.equals(accountToClose)){
+								out.println("Can't be the same account! Please choose a different account: to transfer to\n");
+								accountToTransferFundsTo = selectAccount(customer);
 							}
-						} while (accountToTransferFundsTo.equals(accountToClose));
-						request += "," + accountToTransferFundsTo;
 
-						// send the request and get the response
-						String response = bank.processRequest(customer, request);
-						out.println(response);
+							String transferCloseRequest = "TRANSFERANDCLOSE" + "," + accountToClose +
+									"," + accountToTransferFundsTo;
+
+							// send the request and get the response
+							String response = bank.processRequest(customer, transferCloseRequest);
+							out.println(response);
+						}
 					}
-
 					// return menu
 					returnToMenu();
+
 				} else if (request.equals("4")){
 					clearScreen();
 					out.println("Please select an account type:\n");
@@ -239,32 +254,40 @@ public class NewBankClientHandler extends Thread{
 					out.println("2. Savings Account");
 					String accountType = in.readLine();
 
-					out.println("Please enter how much do you want to deposit to this new account:\n");
+					// moved account type checking to beginning of request
+					while (!(accountType.equals("1")) && (!(accountType.equals("2")))) {
+						out.println("Invalid account type.");
+						out.println("Please enter either 1 to create a Current Account or 2 to create a Savings Account.");
+						accountType = in.readLine();
+					}
+
+					// letting user choose an account name
+					out.println("Please select a custom name for your account:\n");
+					String accountName = in.readLine();
+
+
+					out.println("Please enter how much you want to deposit to this new account:\n");
 					String amountToAdd = in.readLine();
 
 					boolean valid = false;
 					while(!valid){
 						try{
 							int check = Integer.parseInt(amountToAdd);
-							while (check==0.0){
-								out.println("Account cannot be created without any added fund.\n");
-								out.println("Please enter how much do you want to deposit to this new account:\n");
+							while (check <= 0){
+								out.println("Account needs to be created with a positive initial balance.\n");
+								out.println("Please enter how much you want to deposit to this new account:\n");
 								amountToAdd = in.readLine();
 								check = Integer.parseInt(amountToAdd);
 							}
 							valid = true;
 						}catch (NumberFormatException ex) {
 							out.println("Please try again, invalid input.\n");
-							out.println("Please enter how much do you want to deposit to this new account:\n");
+							out.println("Please enter how much you want to deposit to this new account:\n");
 							amountToAdd = in.readLine();
 						}
 					}
 
-					request += "," + accountType + "," + amountToAdd;
-					while (!(accountType.equals("1")) && (!(accountType.equals("2")))) {
-						// ensure customer's entry is valid
-						out.println("Please try again");
-					}
+					request += "," + accountType + "," + accountName + "," + amountToAdd;
 					String response = bank.processRequest(customer, request);
 					out.println(response);
 
@@ -316,8 +339,12 @@ public class NewBankClientHandler extends Thread{
 					sleep();
 					run();
 				}
-				/* I moved command "10" to the ExampleClient class to prevent errors being thrown when exiting the
-				system (which happens when exiting in this class) */
+
+				else if(request.equals("10")){
+					out.println("Thank you and have a nice day!");
+					System.exit(0);
+				}
+
 				else if(!request.equalsIgnoreCase("11")) {
 					clearScreen();
 					out.println("Invalid Entry\n");
@@ -370,7 +397,7 @@ public class NewBankClientHandler extends Thread{
 	}
 
 	private void sleep() throws InterruptedException {
-		Thread.sleep(3000);
+		Thread.sleep(2000);
 	}
 
 	/**

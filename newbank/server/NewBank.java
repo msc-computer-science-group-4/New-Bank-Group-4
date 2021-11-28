@@ -12,21 +12,23 @@ public class NewBank {
 		customers = new HashMap<>();
 		addTestData();
 	}
-
+	// request: 4,1,100
 	private String createNewAccount(CustomerID customer, String request) {
 		List<String> input = Arrays.asList(request.split("\\s*,\\s*"));
 		System.out.println(input.get(1));
 		String accountType = input.get(1);
-		double amount = Double.valueOf(input.get(2));
-		Customer thisCustomer = customers.get(customer.getIBAN());
+		String accountName = input.get(2);
+		double amount = Double.parseDouble(input.get(3));
+		Customer thisCustomer = customers.get(customer.getUserName());
 		if (accountType.equals("1")) {
 			accountType = "Current Account";
 		}
 		if (accountType.equals("2")) {
 			accountType = "Savings Account";
 		}
-		thisCustomer.addAccount(new Account(accountType, amount));
-		return "Account '" + accountType + "' Created.\n";
+		thisCustomer.addAccount(new Account(accountType, accountName, amount));
+		return "Successfully created a new " + String.valueOf(accountType) + " named '" + accountName +
+				"' with an initial balance of " + String.valueOf(amount) + "$.";
 	}
 
 	public void addTestData() {
@@ -44,9 +46,9 @@ public class NewBank {
 		customers.put("John", john);*/
 
 		Customer test = new Customer("test", "testuser", "Test1234#", "UK1233445654634");
-		test.addAccount(new Account("Main", 1000.0));
-		test.addAccount(new Account("Savings", 1500.0));
-		test.addAccount(new Account("Checking", 250.0));
+		test.addAccount(new Account("Current Account", "Main", 1000.0));
+		test.addAccount(new Account("Savings Account", "Savings", 1500.0));
+		test.addAccount(new Account("Current Account", "Checking", 250.0));
 		customers.put(test.getCustomerID().getUserName(), test);
 	}
 
@@ -81,13 +83,37 @@ public class NewBank {
 		//reference: https://www.geeksforgeeks.org/switch-vs-else/
 		if(customers.containsKey(customer.getUserName())) {
 			List<String> input = Arrays.asList(request.split("\\s*,\\s*"));
+			Customer currentCustomer = customers.get(customer.getUserName());
 			switch(input.get(0)) {
 				case "1" :
 				case "DISPLAYSELECTABLEACCOUNTS" :
 					return showMyAccounts(customer);
+
 				case "DISPLAYSELECTEDNAMEACCOUNT":
 					return getSelectedAccountName(customer, Integer.parseInt(input.get(1)));
-				case "2" : return createNewAccount(customer, request);
+
+				case "NUMBEROFUSERACCOUNTS":
+					return String.valueOf(currentCustomer.getAccounts().size());
+
+				case "4" : return createNewAccount(customer, request);
+
+				case "CHECKACCOUNTBALANCE":
+					return String.valueOf(currentCustomer.getAccount(input.get(1)).getCurrentBalance());
+
+				case "CLOSEACCOUNT":
+					return currentCustomer.closeAccount(currentCustomer.getAccount(input.get(1)));
+
+				case "TRANSFERANDCLOSE":
+					Account closingAccount = currentCustomer.getAccount(input.get(1));
+					double remainingBalance = closingAccount.getCurrentBalance();
+					Account transferToAccount = currentCustomer.getAccount(input.get(2));
+					closingAccount.transfer(transferToAccount, closingAccount.getCurrentBalance());
+					currentCustomer.closeAccount(closingAccount);
+					return "Successfully closed account '" + closingAccount.getAccountName()
+							+ "' and transferred the remaining " + remainingBalance +
+							"$ to account '" + transferToAccount.getAccountName() + "'.";
+
+
 				default : return "FAIL";
 
 			}
@@ -130,7 +156,7 @@ public class NewBank {
 			return output;
 		} else {
 			Customer newCustomer = new Customer(customerName, userName, password, iban);       // create new customer
-			newCustomer.addAccount(new Account("Main", 00.0));    // create a default account for the customer
+			newCustomer.addAccount(new Account("Current Account", "Main", 00.0));    // create a default account for the customer
 			bank.customers.put(userName, newCustomer);        // add the customer to the list of customers and assign their username
 			String output = "New user '" + userName + "' created.\n" +
 					"We also created an initial bank account:'Main' with the IBAN: " + iban + " for you.\n" +
