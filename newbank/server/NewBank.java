@@ -45,7 +45,7 @@ public class NewBank {
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);*/
 
-		Customer test = new Customer("test", "testuser", "Test1234#", "UK1233445654634");
+		Customer test = new Customer("test", "testuser", "Test1234#");
 		test.addAccount(new Account("Current Account", "Main", 1000.0));
 		test.addAccount(new Account("Savings Account", "Savings", 1500.0));
 		test.addAccount(new Account("Current Account", "Checking", 250.0));
@@ -144,7 +144,6 @@ public class NewBank {
 		String customerName = input.get(1);
 		String userName = input.get(2);
 		String password = input.get(3);
-		String iban = generateIBAN();
 
 		//Validate password
 		String passwordResponse = isValidPassword(password);
@@ -155,12 +154,14 @@ public class NewBank {
 			String output = "The username already exists.\nPlease enter a unique username or type 'esc' to return to the menu screen.";
 			return output;
 		} else {
-			Customer newCustomer = new Customer(customerName, userName, password, iban);       // create new customer
+			Customer newCustomer = new Customer(customerName, userName, password);       // create new customer
 			newCustomer.addAccount(new Account("Current Account", "Main", 00.0));    // create a default account for the customer
 			bank.customers.put(userName, newCustomer);        // add the customer to the list of customers and assign their username
+			// generate iban for new customer who has just been created and return in the output
+			Account MainAccount = newCustomer.getAccount("Main");
+			String iban = MainAccount.getIBAN();
 			String output = "New user '" + userName + "' created.\n" +
-					"We also created an initial bank account:'Main' with the IBAN: " + iban + " for you.\n" +
-					"Please Download the Google Authenticator App and use the key NY4A5CPJZ46LXZCP to set up your 2FA.";
+					"We also created an initial bank account:'Main' with the IBAN: " + iban + " for you.\n";
 			return output;
 		}
 	}

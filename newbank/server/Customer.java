@@ -8,13 +8,11 @@ public class Customer {
 	private ArrayList<Account> accounts;
 	private CustomerID customerID;
 	private String Name;
-	private String IBAN;
 
-	public Customer(String customerName, String userName, String password, String iban) {
+	public Customer(String customerName, String userName, String password) {
 		accounts = new ArrayList<>();
-		customerID = new CustomerID(customerName, userName, password, iban);
+		customerID = new CustomerID(customerName, userName, password);
 		Name = customerID.getName();
-		IBAN = iban;
 	}
 
 	public CustomerID getCustomerID() {
@@ -24,9 +22,6 @@ public class Customer {
 
 	public String getName() {
 		return Name;
-	}
-	public String getIBAN() {
-		return IBAN;
 	}
 
 	public ArrayList<Account> getAccounts() {
@@ -39,7 +34,7 @@ public class Customer {
 		String accountNameHeading = "Account Name";
 		String accountTypeHeading = "Account Type";
 		String currentBalanceHeading = "Current Balance";
-		String uniqueIBAN = "IBAN: " + customerID.getIBAN();
+		String IBANHeading = "IBAN: ";
 		String s = ""; // the output variable of this function
 
 		int longestAccountNameCount=accountNameHeading.length();
@@ -72,7 +67,7 @@ public class Customer {
 		}
 
 
-		s += accountNameHeading+"        "+accountTypeHeading+"        "+currentBalanceHeading+"        "+uniqueIBAN+"\n";
+		s += accountNameHeading+"        "+accountTypeHeading+"        "+currentBalanceHeading+"        "+IBANHeading+"\n";
 
 		// Divider
 		int dividerLength = s.length();
@@ -91,6 +86,8 @@ public class Customer {
 			s += "      " + a.getAccountType() + " ";
 			s += "        ";
 			s += a.getCurrentBalance();
+			s += "        ";
+			s += a.getIBAN();
 			s += "\n";
 			counter+=1;
 		}
