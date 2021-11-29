@@ -102,7 +102,8 @@ public class NewBank {
 
 				case "CLOSEACCOUNT":
 					return currentCustomer.closeAccount(currentCustomer.getAccount(input.get(1)));
-
+				case "ADDMONEY":
+					return addMoneyToAccount(customer, input.get(1), Double.parseDouble(input.get(2)));
 				case "TRANSFERANDCLOSE":
 					Account closingAccount = currentCustomer.getAccount(input.get(1));
 					double remainingBalance = closingAccount.getCurrentBalance();
@@ -223,5 +224,12 @@ public class NewBank {
 	private String getSelectedAccountName(CustomerID customer, Integer accountIndex) {
 		ArrayList<Account> accounts = customers.get(customer.getUserName()).getAllAccounts();
 		return accounts.get(accountIndex).getAccountName();
+	}
+
+	private String addMoneyToAccount(CustomerID customer, String accountName, double amount) {
+		Account account = customers.get(customer.getUserName()).getAccount(accountName);
+		double balance = account.getCurrentBalance();
+		account.setAmount(balance+amount);
+		return amount+" was successfully added to " + accountName + " account";
 	}
 }

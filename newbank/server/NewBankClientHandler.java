@@ -322,15 +322,33 @@ public class NewBankClientHandler extends Thread{
 					out.println(response);
 
 				} else if (request.equals("8")){ // Adding funds to an Account
-					out.println("Please enter the number next to the name of the Account you would like to " +
-							"add funds to: ");
-					/* there currently is a null response problem with the selectAccount method. It thus does not return
-					a value. Before this command can be implemented, the selectAccount() method needs to be fixed */
+					clearScreen();
+					out.println("Enter the Account you wish to add money:  ");
+					String account = selectAccount(customer);
 
-					//selectAccount(customer);
+					out.println("Enter the Amount to add:  ");
+					String amountToAdd = in.readLine();
 
+					boolean valid = false;
+					while(!valid){
+						try{
+							int check = Integer.parseInt(amountToAdd);
+							valid = true;
+						}catch (NumberFormatException ex) {
+							out.println("Invalid input, please try again.\n");
+							out.println("Enter the Amount to add:  ");
+							amountToAdd = in.readLine();
+						}
+					}
 
+					out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
+					String authNumber = in.readLine();
 
+					String req = "ADDMONEY," + account + "," + amountToAdd + "," + authNumber;
+
+					String response = bank.processRequest(customer, req);
+					out.println(response);
+					returnToMenu();
 
 				}
 				else if (request.equals("9")) {
