@@ -161,8 +161,7 @@ public class NewBank {
 			Account MainAccount = newCustomer.getAccount("Main");
 			String iban = MainAccount.getIBAN();
 			String output = "New user '" + userName + "' created.\n" +
-					"We also created an initial bank account:'Main' with the IBAN: " + iban + " for you.\n" +
-					"Please Download the Google Authenticator App and use the key NY4A5CPJZ46LXZCP to set up your 2FA.";
+					"We also created an initial bank account:'Main' with the IBAN: " + iban + " for you.\n";
 			return output;
 		}
 	}
