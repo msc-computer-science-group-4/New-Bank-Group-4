@@ -226,6 +226,9 @@ public class NewBank {
 		return accounts.get(accountIndex).getAccountName();
 	}
 
+	/**
+	 * This method set a new balance for a selected account.
+	 */
 	private String addMoneyToAccount(CustomerID customer, String accountName, double amount) {
 		Account account = customers.get(customer.getUserName()).getAccount(accountName);
 		double balance = account.getCurrentBalance();
