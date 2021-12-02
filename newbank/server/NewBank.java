@@ -7,9 +7,11 @@ public class NewBank {
 
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
+	private HashMap<String,Loan> loans;
 
 	private NewBank() {
 		customers = new HashMap<>();
+		loans = new HashMap<>();
 		addTestData();
 	}
 	// request: 4,1,100
@@ -32,24 +34,17 @@ public class NewBank {
 	}
 
 	public void addTestData() {
-		/*
-		Customer bhagy = new Customer();
-		bhagy.addAccount(new Account("Main", 1000.0));
-		customers.put("Bhagy", bhagy);
-
-		Customer christina = new Customer();
-		christina.addAccount(new Account("Savings", 1500.0));
-		customers.put("Christina", christina);
-
-		Customer john = new Customer();
-		john.addAccount(new Account("Checking", 250.0));
-		customers.put("John", john);*/
 
 		Customer test = new Customer("test", "testuser", "Test1234#", "UK1233445654634");
 		test.addAccount(new Account("Current Account", "Main", 1000.0));
 		test.addAccount(new Account("Savings Account", "Savings", 1500.0));
 		test.addAccount(new Account("Current Account", "Checking", 250.0));
 		customers.put(test.getCustomerID().getUserName(), test);
+
+		Loan loan1 = new Loan("Home Improvement Loan", 10000, 10, 0.05);
+		Loan loan2 = new Loan("Car Loan", 20000, 5, 0.09);
+		loans.put(loan1.getLoanName(), loan1);
+		loans.put(loan2.getLoanName(), loan2);
 	}
 
 	public static NewBank getBank() {
