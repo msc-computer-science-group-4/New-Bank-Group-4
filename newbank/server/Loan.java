@@ -26,6 +26,14 @@ public class Loan {
 		return loanName;
 	}
 
+	public int getLoanTerm() {
+		return loanTerm;
+	}
+
+	public double getLoanInterestRate() {
+		return interestRate;
+	}
+
 	public double getPayoffAmount() { return payoffAmount; }
 
 	//add interest over a certain time. Each interest amount is compounded after a number of seconds passed

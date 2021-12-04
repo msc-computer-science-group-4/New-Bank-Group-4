@@ -43,8 +43,8 @@ public class NewBank {
 
 		Loan loan1 = new Loan("Home Improvement Loan", 10000, 10, 0.05);
 		Loan loan2 = new Loan("Car Loan", 20000, 5, 0.09);
-		loans.put(loan1.getLoanName(), loan1);
-		loans.put(loan2.getLoanName(), loan2);
+		loans.add(loan1);
+		loans.add(loan2);
 	}
 
 	public static NewBank getBank() {
@@ -54,7 +54,7 @@ public class NewBank {
 	public HashMap<String,Customer> getCustomers(){
 		return customers;
 	}
-	public HashMap<String,Loan> getLoans(){
+	public ArrayList<Loan> getLoans(){
 		return loans;
 	}
 
@@ -94,6 +94,8 @@ public class NewBank {
 					return String.valueOf(currentCustomer.getAccounts().size());
 
 				case "4" : return createNewAccount(customer, request);
+
+				case "5" : return showAllLoans();
 
 				case "CHECKACCOUNTBALANCE":
 					return String.valueOf(currentCustomer.getAccount(input.get(1)).getCurrentBalance());
@@ -215,6 +217,10 @@ public class NewBank {
 		return customers.get(customer.getUserName()).accountsToString();
 	}
 
+	private String showAllLoans() {
+		return loansToString();
+	}
+
 	/**
 	 * This method searches for the selected account by index and returns the name of the found account
 	 */
@@ -223,5 +229,61 @@ public class NewBank {
 		return accounts.get(accountIndex).getAccountName();
 	}
 
+	public String loansToString() {
+		String loanNameHeading = "Loan Name";
+		String loanAmountHeading = "Loan Amount";
+		String loanTermHeading = "Loan Term";
+		String loanRateHeading = "Interest Rate";
+		String s = ""; // the output variable of this function
 
+		int longestLoanNameCount=loanNameHeading.length();
+
+		for(Loan l : loans) {
+			if(l.getLoanName().length() > longestLoanNameCount) {
+				longestLoanNameCount = l.getLoanName().length();
+			}
+		}
+
+		int longestAmountCount=loanAmountHeading.length();
+		for(int i=0; i<longestAmountCount-5; i++){
+			loanAmountHeading += " ";
+		}
+
+		int longestTermCount=loanTermHeading.length();
+			for(int i=0; i<longestTermCount-1; i++){
+				loanTermHeading += " ";
+		}
+
+		int longestRateCount=loanRateHeading.length();
+		for(int i=0; i<longestRateCount-3; i++){
+			loanRateHeading += " ";
+		}
+
+
+		s += loanNameHeading+"        "+loanAmountHeading+"        "+loanTermHeading+"        "+loanRateHeading+"\n";
+
+		// Divider
+		int dividerLength = s.length();
+		for(int i=0; i<dividerLength; i++){
+		s += "-";
+		}
+		s += "\n";
+
+		// Accounts detail
+		int counter = 1;
+		for(Loan l : loans) {
+			s += counter + "." + l.getLoanName();
+			for(int i = 0; i<longestLoanNameCount-l.getLoanName().length(); i++){
+				s += " ";
+			}
+			s += "      " + l.getLoanAmount() + " ";
+			s += "        ";
+			s += l.getLoanTerm();
+			s += "        ";
+			s += l.getLoanInterestRate();
+			s += "\n";
+			counter+=1;
+			}
+		// return output
+		return s; }
 }

@@ -332,8 +332,8 @@ public class NewBankClientHandler extends Thread{
 				// showing all available loans
 				else if (request.equals("9")) {
 					clearScreen();
-					String dashboard = bank.processRequest(customer, "1");
-					out.println(dashboard);
+					String loanDashboard = bank.processRequest(customer, "5");
+					out.println(loanDashboard);
 					returnToMenu();
 				}
 
