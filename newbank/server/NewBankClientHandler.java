@@ -139,14 +139,25 @@ public class NewBankClientHandler extends Thread{
 					out.println("Enter the IBAN of the customer Account which is receiving the funds: ");
 					String iban = in.readLine();
 
+					out.println("Enter the number next to the name of the Account you would like to transfer from:  ");
+					String accountName = selectAccount(customer);
+
+					String responseBalance = bank.processRequest(customer, "CHECKACCOUNTBALANCE,"+accountName);
+					Double balance = Double.parseDouble(responseBalance);
+
 					out.println("Enter the Amount you would like to transfer:  ");
 					String transferableSum = in.readLine();
 
 					boolean valid = false;
 					while(!valid){
 						try{
-							int check = Integer.parseInt(transferableSum);
-							valid = true;
+							double check = Double.parseDouble(transferableSum);
+							if (check <= balance && check >= 0) {
+								valid = true;
+							} else if (check > balance) {
+								out.println("There are not enough funds on the account, enter a smaller amount:  ");
+								transferableSum = in.readLine();
+							}
 						}catch (NumberFormatException ex) {
 							out.println("Amount is invalid, please try again.\n");
 							out.println("Enter the Amount you would like to transfer:  ");
@@ -154,10 +165,7 @@ public class NewBankClientHandler extends Thread{
 						}
 					}
 
-					out.println("Enter the number next to the name of the Account you would like to transfer from:  ");
-					String accountName = selectAccount(customer);
-
-					request += "," + receiver + "," + iban + "," + transferableSum + "," + accountName + ",";
+					request = "TRANSFERTOUSER," + receiver + "," + iban + "," + transferableSum + "," + accountName + ",";
 
 					String response = bank.processRequest(customer, request);
 					out.println(response);

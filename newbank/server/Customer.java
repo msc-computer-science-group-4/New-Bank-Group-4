@@ -109,6 +109,15 @@ public class Customer {
 		return null;
 	}
 
+	public Account getAccountIBAN(String iban) {
+		for(Account a : accounts){
+			if (a.getIBAN().equals(iban)) {
+				return a;
+			}
+		}
+		return null;
+	}
+
 	public ArrayList<Account> getAllAccounts() {
 		return accounts;
 	}
