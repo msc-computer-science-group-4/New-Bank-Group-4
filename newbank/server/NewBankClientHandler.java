@@ -333,7 +333,13 @@ public class NewBankClientHandler extends Thread{
 					while(!valid){
 						try{
 							int check = Integer.parseInt(amountToAdd);
-							valid = true;
+							if (check>=0) {
+								valid = true;
+							} else {
+								out.println("The amount must be positive, please try again.\n");
+								amountToAdd = in.readLine();
+							}
+
 						}catch (NumberFormatException ex) {
 							out.println("Invalid input, please try again.\n");
 							out.println("Enter the Amount to add:  ");
