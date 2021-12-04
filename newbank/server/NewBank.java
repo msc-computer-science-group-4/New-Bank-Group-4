@@ -7,11 +7,11 @@ public class NewBank {
 
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
-	private HashMap<String,Loan> loans;
+	private ArrayList<Loan> loans;
 
 	private NewBank() {
 		customers = new HashMap<>();
-		loans = new HashMap<>();
+		loans = new ArrayList<>();
 		addTestData();
 	}
 	// request: 4,1,100
@@ -53,6 +53,9 @@ public class NewBank {
 
 	public HashMap<String,Customer> getCustomers(){
 		return customers;
+	}
+	public HashMap<String,Loan> getLoans(){
+		return loans;
 	}
 
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
@@ -219,4 +222,6 @@ public class NewBank {
 		ArrayList<Account> accounts = customers.get(customer.getUserName()).getAllAccounts();
 		return accounts.get(accountIndex).getAccountName();
 	}
+
+
 }
