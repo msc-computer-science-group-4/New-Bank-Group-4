@@ -5,19 +5,13 @@ public class CustomerID {
 	private String Name;
 	private String userName;
 	private String password;
-	private String IBAN;
 
-	public CustomerID(String name, String userName, String password, String iban) {
-		this.Name = name; this.userName = userName; this.password = password; this.IBAN = iban;
+	public CustomerID(String name, String userName, String password) {
+		this.Name = name; this.userName = userName; this.password = password;
 	}
 
 	public String getName() {
 		return Name;
-	}
-
-	public String getIBAN()
-	{
-		return IBAN;
 	}
 
 	public String getUserName() {

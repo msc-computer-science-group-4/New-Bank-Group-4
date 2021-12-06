@@ -412,16 +412,15 @@ public class NewBankClientHandler extends Thread{
 	private String selectAccount(CustomerID customer) throws Exception {
 		//out.println("Enter the Account that you want to transfer from:  ");
 		String selectableAccounts = bank.processRequest(customer, "DISPLAYSELECTABLEACCOUNTS");
+		String numberOfAccounts = bank.processRequest(customer, "NUMBEROFUSERACCOUNTS");
 		String option = "";
-		String[] listOfSelections = selectableAccounts.split("\\n");
 		boolean b = true;
 		while (b){
 			try{
 				out.println(selectableAccounts);
 				option = in.readLine();
 				option = option.trim();
-				while (Integer.parseInt(option) > listOfSelections.length ||
-						Integer.parseInt(option) <= 0){
+				while (Integer.parseInt(option) > Integer.parseInt(numberOfAccounts) || Integer.parseInt(option) <= 0){
 					out.println("Please select a valid option:");
 					out.println(selectableAccounts);
 					option = in.readLine();
