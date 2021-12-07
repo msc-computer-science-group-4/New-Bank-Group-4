@@ -1,6 +1,7 @@
 package newbank.server;
 
 //importing all java utility libraries
+import java.io.IOException;
 import java.util.*;
 
 public class NewBank {
@@ -102,8 +103,20 @@ public class NewBank {
 
 				case "CLOSEACCOUNT":
 					return currentCustomer.closeAccount(currentCustomer.getAccount(input.get(1)));
+
+				case "TRANSFERTOUSER":
+					Customer receiver = customers.get(input.get(1));
+					Double transferableSum = Double.parseDouble(input.get(3));
+					String res = transferToUser(currentCustomer, receiver, transferableSum,input.get(4), input.get(2));
+					if (res == "success") {
+						return "Successfully sent " +transferableSum+ "$ from your account '" + input.get(4)
+								+ "' to account " + input.get(2) + ".";
+					} else {
+						return "Something went wrong. Please, try again later.";
+					}
 				case "ADDMONEY":
 					return addMoneyToAccount(customer, input.get(1), Double.parseDouble(input.get(2)));
+
 				case "TRANSFERANDCLOSE":
 					Account closingAccount = currentCustomer.getAccount(input.get(1));
 					double remainingBalance = closingAccount.getCurrentBalance();
@@ -228,6 +241,25 @@ public class NewBank {
 	}
 
 	/**
+	 * This method finds the account of the current customer and the recipient's account,
+	 * after which the balances of these accounts are updated
+	 */
+	private String transferToUser(Customer currentCustomer, Customer receiver, Double transferableSum, String CustomerAccountName, String receiverIban) {
+		try {
+			Account fromAccount = currentCustomer.getAccount(CustomerAccountName);
+			Double balanceFromAccount = fromAccount.getCurrentBalance();
+
+			Account toAccount = receiver.getAccountIBAN(receiverIban);
+			Double balanceToAccount = toAccount.getCurrentBalance();
+			fromAccount.setAmount(balanceFromAccount-transferableSum);
+			toAccount.setAmount(balanceToAccount+transferableSum);
+			return "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "fail";
+		}
+
+  /**
 	 * This method set a new balance for a selected account.
 	 */
 	private String addMoneyToAccount(CustomerID customer, String accountName, double amount) {

@@ -12,6 +12,7 @@ public class Account {
 	public Account(String accountType, String accountName, double amount) {
 		this.accountType = accountType;
 		this.accountName = accountName;
+		this.currentBalance = amount;
 		this.IBANCreated = false;
 	}
 
