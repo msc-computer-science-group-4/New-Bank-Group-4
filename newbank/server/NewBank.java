@@ -8,9 +8,11 @@ public class NewBank {
 
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
+	private ArrayList<Loan> loans;
 
 	private NewBank() {
 		customers = new HashMap<>();
+		loans = new ArrayList<>();
 		addTestData();
 	}
 	// request: 4,1,100
@@ -33,24 +35,17 @@ public class NewBank {
 	}
 
 	public void addTestData() {
-		/*
-		Customer bhagy = new Customer();
-		bhagy.addAccount(new Account("Main", 1000.0));
-		customers.put("Bhagy", bhagy);
-
-		Customer christina = new Customer();
-		christina.addAccount(new Account("Savings", 1500.0));
-		customers.put("Christina", christina);
-
-		Customer john = new Customer();
-		john.addAccount(new Account("Checking", 250.0));
-		customers.put("John", john);*/
 
 		Customer test = new Customer("test", "testuser", "Test1234#");
 		test.addAccount(new Account("Current Account", "Main", 1000.0));
 		test.addAccount(new Account("Savings Account", "Savings", 1500.0));
 		test.addAccount(new Account("Current Account", "Checking", 250.0));
 		customers.put(test.getCustomerID().getUserName(), test);
+
+		Loan loan1 = new Loan("Home Improvement Loan", 10000, 10, 0.05);
+		Loan loan2 = new Loan("Car Loan", 20000, 5, 0.09);
+		loans.add(loan1);
+		loans.add(loan2);
 	}
 
 	public static NewBank getBank() {
@@ -59,6 +54,9 @@ public class NewBank {
 
 	public HashMap<String,Customer> getCustomers(){
 		return customers;
+	}
+	public ArrayList<Loan> getLoans(){
+		return loans;
 	}
 
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
@@ -97,6 +95,8 @@ public class NewBank {
 					return String.valueOf(currentCustomer.getAccounts().size());
 
 				case "4" : return createNewAccount(customer, request);
+
+				case "5" : return showAllLoans();
 
 				case "CHECKACCOUNTBALANCE":
 					return String.valueOf(currentCustomer.getAccount(input.get(1)).getCurrentBalance());
@@ -232,6 +232,10 @@ public class NewBank {
 		return customers.get(customer.getUserName()).accountsToString();
 	}
 
+	private String showAllLoans() {
+		return loansToString();
+	}
+
 	/**
 	 * This method searches for the selected account by index and returns the name of the found account
 	 */
@@ -239,6 +243,65 @@ public class NewBank {
 		ArrayList<Account> accounts = customers.get(customer.getUserName()).getAllAccounts();
 		return accounts.get(accountIndex).getAccountName();
 	}
+
+
+	public String loansToString() {
+		String loanNameHeading = "Loan Name";
+		String loanAmountHeading = "Loan Amount";
+		String loanTermHeading = "Loan Term";
+		String loanRateHeading = "Interest Rate";
+		String s = ""; // the output variable of this function
+
+		int longestLoanNameCount=loanNameHeading.length();
+
+		for(Loan l : loans) {
+			if(l.getLoanName().length() > longestLoanNameCount) {
+				longestLoanNameCount = l.getLoanName().length();
+			}
+		}
+
+		int longestAmountCount=loanAmountHeading.length();
+		for(int i=0; i<longestAmountCount-5; i++){
+			loanAmountHeading += " ";
+		}
+
+		int longestTermCount=loanTermHeading.length();
+			for(int i=0; i<longestTermCount-1; i++){
+				loanTermHeading += " ";
+		}
+
+		int longestRateCount=loanRateHeading.length();
+		for(int i=0; i<longestRateCount-3; i++){
+			loanRateHeading += " ";
+		}
+
+
+		s += loanNameHeading+"        "+loanAmountHeading+"        "+loanTermHeading+"        "+loanRateHeading+"\n";
+
+		// Divider
+		int dividerLength = s.length();
+		for(int i=0; i<dividerLength; i++){
+		s += "-";
+		}
+		s += "\n";
+
+		// Accounts detail
+		int counter = 1;
+		for(Loan l : loans) {
+			s += counter + "." + l.getLoanName();
+			for(int i = 0; i<longestLoanNameCount-l.getLoanName().length(); i++){
+				s += " ";
+			}
+			s += "      " + l.getLoanAmount() + " ";
+			s += "        ";
+			s += l.getLoanTerm();
+			s += "        ";
+			s += l.getLoanInterestRate();
+			s += "\n";
+			counter+=1;
+			}
+		// return output
+		return s; }
 
 	/**
 	 * This method finds the account of the current customer and the recipient's account,

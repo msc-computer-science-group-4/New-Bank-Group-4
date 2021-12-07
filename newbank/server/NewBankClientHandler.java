@@ -363,16 +363,23 @@ public class NewBankClientHandler extends Thread{
 					String response = bank.processRequest(customer, req);
 					out.println(response);
 					returnToMenu();
-
 				}
+				// showing all available loans
 				else if (request.equals("9")) {
+					clearScreen();
+					String loanDashboard = bank.processRequest(customer, "5");
+					out.println(loanDashboard);
+					returnToMenu();
+				}
+
+				else if (request.equals("10")) {
 					clearScreen();
 					out.println("Logging out...");
 					sleep();
 					run();
 				}
 
-				else if(request.equals("10")){
+				else if(request.equals("11")){
 					out.println("Thank you and have a nice day!");
 					System.exit(0);
 				}
@@ -411,8 +418,9 @@ public class NewBankClientHandler extends Thread{
 				"4. Create New Account\n" +
 				"5. Close an Account\n" +
 				"8. Add Funds to an Account\n" +
-				"9. Log out\n" +
-				"10. Quit\n";
+				"9. Take out Loan\n" +
+				"10. Log out\n" +
+				"11. Quit\n";
 	}
 
 	public void clearScreen() {

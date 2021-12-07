@@ -6,12 +6,16 @@ import java.util.ArrayList;
 public class Customer {
 
 	private ArrayList<Account> accounts;
+	private ArrayList<Loan> loans;
 	private CustomerID customerID;
 	private String Name;
 
 	public Customer(String customerName, String userName, String password) {
 		accounts = new ArrayList<>();
-		customerID = new CustomerID(customerName, userName, password);
+
+		loans = new ArrayList<>();
+		customerID = new CustomerID(customerName, userName, password, iban);
+
 		Name = customerID.getName();
 	}
 
@@ -26,6 +30,9 @@ public class Customer {
 
 	public ArrayList<Account> getAccounts() {
 		return accounts;
+	}
+	public ArrayList<Loan> getLoans() {
+		return loans;
 	}
 
 
