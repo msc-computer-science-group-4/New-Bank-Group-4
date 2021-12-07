@@ -139,14 +139,25 @@ public class NewBankClientHandler extends Thread{
 					out.println("Enter the IBAN of the customer Account which is receiving the funds: ");
 					String iban = in.readLine();
 
+					out.println("Enter the number next to the name of the Account you would like to transfer from:  ");
+					String accountName = selectAccount(customer);
+
+					String responseBalance = bank.processRequest(customer, "CHECKACCOUNTBALANCE,"+accountName);
+					Double balance = Double.parseDouble(responseBalance);
+
 					out.println("Enter the Amount you would like to transfer:  ");
 					String transferableSum = in.readLine();
 
 					boolean valid = false;
 					while(!valid){
 						try{
-							int check = Integer.parseInt(transferableSum);
-							valid = true;
+							double check = Double.parseDouble(transferableSum);
+							if (check <= balance && check >= 0) {
+								valid = true;
+							} else if (check > balance) {
+								out.println("There are not enough funds on the account, enter a smaller amount:  ");
+								transferableSum = in.readLine();
+							}
 						}catch (NumberFormatException ex) {
 							out.println("Amount is invalid, please try again.\n");
 							out.println("Enter the Amount you would like to transfer:  ");
@@ -154,10 +165,7 @@ public class NewBankClientHandler extends Thread{
 						}
 					}
 
-					out.println("Enter the number next to the name of the Account you would like to transfer from:  ");
-					String accountName = selectAccount(customer);
-
-					request += "," + receiver + "," + iban + "," + transferableSum + "," + accountName + ",";
+					request = "TRANSFERTOUSER," + receiver + "," + iban + "," + transferableSum + "," + accountName + ",";
 
 					String response = bank.processRequest(customer, request);
 					out.println(response);
@@ -322,12 +330,39 @@ public class NewBankClientHandler extends Thread{
 					out.println(response);
 
 				} else if (request.equals("8")){ // Adding funds to an Account
-					out.println("Please enter the number next to the name of the Account you would like to " +
-							"add funds to: ");
-					/* there currently is a null response problem with the selectAccount method. It thus does not return
-					a value. Before this command can be implemented, the selectAccount() method needs to be fixed */
+					clearScreen();
+					out.println("Enter the Account you wish to add money:  ");
+					String account = selectAccount(customer);
 
-					//selectAccount(customer);
+					out.println("Enter the Amount to add:  ");
+					String amountToAdd = in.readLine();
+
+					boolean valid = false;
+					while(!valid){
+						try{
+							int check = Integer.parseInt(amountToAdd);
+							if (check>=0) {
+								valid = true;
+							} else {
+								out.println("The amount must be positive, please try again.\n");
+								amountToAdd = in.readLine();
+							}
+
+						}catch (NumberFormatException ex) {
+							out.println("Invalid input, please try again.\n");
+							out.println("Enter the Amount to add:  ");
+							amountToAdd = in.readLine();
+						}
+					}
+
+					out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
+					String authNumber = in.readLine();
+
+					String req = "ADDMONEY," + account + "," + amountToAdd + "," + authNumber;
+
+					String response = bank.processRequest(customer, req);
+					out.println(response);
+					returnToMenu();
 				}
 				// showing all available loans
 				else if (request.equals("9")) {
