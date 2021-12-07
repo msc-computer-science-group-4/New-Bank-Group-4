@@ -114,6 +114,8 @@ public class NewBank {
 					} else {
 						return "Something went wrong. Please, try again later.";
 					}
+				case "ADDMONEY":
+					return addMoneyToAccount(customer, input.get(1), Double.parseDouble(input.get(2)));
 
 				case "TRANSFERANDCLOSE":
 					Account closingAccount = currentCustomer.getAccount(input.get(1));
@@ -256,5 +258,14 @@ public class NewBank {
 			e.printStackTrace();
 			return "fail";
 		}
+
+  /**
+	 * This method set a new balance for a selected account.
+	 */
+	private String addMoneyToAccount(CustomerID customer, String accountName, double amount) {
+		Account account = customers.get(customer.getUserName()).getAccount(accountName);
+		double balance = account.getCurrentBalance();
+		account.setAmount(balance+amount);
+		return amount+" was successfully added to " + accountName + " account";
 	}
 }
