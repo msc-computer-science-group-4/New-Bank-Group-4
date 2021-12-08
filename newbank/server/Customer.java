@@ -14,7 +14,7 @@ public class Customer {
 		accounts = new ArrayList<>();
 
 		loans = new ArrayList<>();
-		customerID = new CustomerID(customerName, userName, password, iban);
+		customerID = new CustomerID(customerName, userName, password);
 
 		Name = customerID.getName();
 	}
@@ -106,6 +106,8 @@ public class Customer {
 	public void addAccount(Account account) {
 		accounts.add(account);
 	}
+
+	//public void addOfferedLoan(Loan offeredLoan) { offeredLoans.add(offeredLoan); }
 
 	public Account getAccount(String accountName) {
 		for(Account a : accounts){
