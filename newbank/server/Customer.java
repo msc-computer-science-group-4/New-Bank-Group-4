@@ -107,9 +107,20 @@ public class Customer {
 		accounts.add(account);
 	}
 
+	//public void addOfferedLoan(Loan offeredLoan) { offeredLoans.add(offeredLoan); }
+
 	public Account getAccount(String accountName) {
 		for(Account a : accounts){
 			if (a.getAccountName().equals(accountName)) {
+				return a;
+			}
+		}
+		return null;
+	}
+
+	public Account getAccountIBAN(String iban) {
+		for(Account a : accounts){
+			if (a.getIBAN().equals(iban)) {
 				return a;
 			}
 		}

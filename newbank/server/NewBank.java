@@ -2,6 +2,7 @@ package newbank.server;
 
 //importing all java utility libraries
 import java.util.*;
+import java.time.LocalDate;
 
 public class NewBank {
 
@@ -34,17 +35,16 @@ public class NewBank {
 	}
 
 	public void addTestData() {
-
 		Customer test = new Customer("test", "testuser", "Test1234#");
+
 		test.addAccount(new Account("Current Account", "Main", 1000.0));
 		test.addAccount(new Account("Savings Account", "Savings", 1500.0));
 		test.addAccount(new Account("Current Account", "Checking", 250.0));
-		customers.put(test.getCustomerID().getUserName(), test);
 
-		Loan loan1 = new Loan("Home Improvement Loan", 10000, 10, 0.05);
-		Loan loan2 = new Loan("Car Loan", 20000, 5, 0.09);
-		loans.add(loan1);
-		loans.add(loan2);
+		loans.add(new Loan("loan-testuser-2021-12-05", 10000.0, 10, 0.05, "testuser"));
+		loans.add(new Loan("loan-testuser-2021-12-03", 20000.0, 20, 0.09, "testuser"));
+
+		customers.put(test.getCustomerID().getUserName(), test);
 	}
 
 	public static NewBank getBank() {
@@ -95,13 +95,26 @@ public class NewBank {
 
 				case "4" : return createNewAccount(customer, request);
 
-				case "5" : return showAllLoans();
+				case "SHOWLOANS" : return loansToString(input.get(1));
 
 				case "CHECKACCOUNTBALANCE":
 					return String.valueOf(currentCustomer.getAccount(input.get(1)).getCurrentBalance());
 
 				case "CLOSEACCOUNT":
 					return currentCustomer.closeAccount(currentCustomer.getAccount(input.get(1)));
+
+				case "TRANSFERTOUSER":
+					Customer receiver = customers.get(input.get(1));
+					Double transferableSum = Double.parseDouble(input.get(3));
+					String res = transferToUser(currentCustomer, receiver, transferableSum,input.get(4), input.get(2));
+					if (res == "success") {
+						return "Successfully sent " +transferableSum+ "$ from your account '" + input.get(4)
+								+ "' to account " + input.get(2) + ".";
+					} else {
+						return "Something went wrong. Please, try again later.";
+					}
+				case "ADDMONEY":
+					return addMoneyToAccount(customer, input.get(1), Double.parseDouble(input.get(2)));
 
 				case "TRANSFERANDCLOSE":
 					Account closingAccount = currentCustomer.getAccount(input.get(1));
@@ -114,8 +127,16 @@ public class NewBank {
 							"$ to account '" + transferToAccount.getAccountName() + "'.";
 
 				case "OFFERLOAN":
-
-					return "Successfully added a new loan offer.";
+					String loanName = "loan-" + customer.getUserName() + '-' + LocalDate.now();
+					Double loanAmount = Double.parseDouble(input.get(2));
+					Double rate = Double.parseDouble(input.get(3));
+					int loanTerm = Integer.parseInt(input.get(4));
+					String response = offerLoan(customer, loanName, loanAmount, rate, loanTerm, input.get(1));
+					if (response == "success") {
+						return "Successfully added " + loanName + " loan offer in the amount of " + loanAmount + "$ for a period of " + loanTerm + " days.";
+					} else {
+						return "Something went wrong. Please, try again later.";
+					}
 
 				default : return "FAIL";
 
@@ -221,8 +242,8 @@ public class NewBank {
 		return customers.get(customer.getUserName()).accountsToString();
 	}
 
-	private String showAllLoans() {
-		return loansToString();
+	private String showAllTakenLoans() {
+		return loansToString("taken");
 	}
 
 	/**
@@ -233,16 +254,29 @@ public class NewBank {
 		return accounts.get(accountIndex).getAccountName();
 	}
 
-	public String loansToString() {
+	/**
+	 * This method returns table of offered (all loans that haven't been taken yet) or taken loans.
+	 */
+	public String loansToString(String type) {
 		String loanNameHeading = "Loan Name";
 		String loanAmountHeading = "Loan Amount";
 		String loanTermHeading = "Loan Term";
 		String loanRateHeading = "Interest Rate";
+		String loanCreditorHeading = "Creditor";
 		String s = ""; // the output variable of this function
 
+		// if barrowerName is equal NONE in a loan then it's a loan that could be offered.
+		// if barrowerName isn't equal NONE in a loan then it's a loan that has been taken.
 		int longestLoanNameCount=loanNameHeading.length();
-
+		ArrayList<Loan> loanList = new ArrayList<>();
 		for(Loan l : loans) {
+			String barrowerName = l.getborrowerName();
+			if ((barrowerName.equals("NONE") && type.equals("offered")) || (!barrowerName.equals("NONE") && type.equals("taken"))) {
+				loanList.add(l);
+			}
+		}
+
+		for(Loan l : loanList) {
 			if(l.getLoanName().length() > longestLoanNameCount) {
 				longestLoanNameCount = l.getLoanName().length();
 			}
@@ -254,8 +288,8 @@ public class NewBank {
 		}
 
 		int longestTermCount=loanTermHeading.length();
-			for(int i=0; i<longestTermCount-1; i++){
-				loanTermHeading += " ";
+		for(int i=0; i<longestTermCount-1; i++){
+			loanTermHeading += " ";
 		}
 
 		int longestRateCount=loanRateHeading.length();
@@ -263,19 +297,23 @@ public class NewBank {
 			loanRateHeading += " ";
 		}
 
+		int longestCreditorCount=loanCreditorHeading.length();
+		for(int i=0; i<longestCreditorCount-3; i++){
+			loanCreditorHeading += " ";
+		}
 
-		s += loanNameHeading+"        "+loanAmountHeading+"        "+loanTermHeading+"        "+loanRateHeading+"\n";
+		s += loanNameHeading+"        "+loanAmountHeading+"        "+loanTermHeading+"        "+loanRateHeading+"        "+loanCreditorHeading+"\n";
 
 		// Divider
 		int dividerLength = s.length();
 		for(int i=0; i<dividerLength; i++){
-		s += "-";
+			s += "-";
 		}
 		s += "\n";
 
 		// Accounts detail
 		int counter = 1;
-		for(Loan l : loans) {
+		for(Loan l : loanList) {
 			s += counter + "." + l.getLoanName();
 			for(int i = 0; i<longestLoanNameCount-l.getLoanName().length(); i++){
 				s += " ";
@@ -285,15 +323,42 @@ public class NewBank {
 			s += l.getLoanTerm();
 			s += "        ";
 			s += l.getLoanInterestRate();
+			s += "        ";
+			s += l.getCreditorUserName();
 			s += "\n";
 			counter+=1;
-			}
+		}
 		// return output
 		return s; }
 
-	private String offerLoan(Customer customer, Customer receiver, Double loanAmount, Double rate, int loanTerm) {
+	/**
+	 * This method adds a new loan's offer
+	 */
+	private String offerLoan(CustomerID customer, String loanName, Double loanAmount, Double rate, int loanTerm, String accountName) {
 		try {
-			Loan newLoan = new
+			String userName =  customer.getUserName();
+
+			//new offer adds to NewBank list - loans
+			loans.add(new Loan(loanName, loanAmount, loanTerm, rate, userName));
+
+			//after the offer is ready, the bank writes off the customers' money
+			Account account = customers.get(customer.getUserName()).getAccount(accountName);
+			double balance = account.getCurrentBalance();
+			account.setAmount(balance-loanAmount);
+
+			return "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "fail";
+		}
+	}
+
+	/**
+	 * This method finds the account of the current customer and the recipient's account,
+	 * after which the balances of these accounts are updated
+	 */
+	private String transferToUser(Customer currentCustomer, Customer receiver, Double transferableSum, String CustomerAccountName, String receiverIban) {
+		try {
 			Account fromAccount = currentCustomer.getAccount(CustomerAccountName);
 			Double balanceFromAccount = fromAccount.getCurrentBalance();
 
@@ -306,5 +371,15 @@ public class NewBank {
 			e.printStackTrace();
 			return "fail";
 		}
+	}
+
+	/**
+	 * This method set a new balance for a selected account.
+	 */
+	private String addMoneyToAccount(CustomerID customer, String accountName, double amount) {
+		Account account = customers.get(customer.getUserName()).getAccount(accountName);
+		double balance = account.getCurrentBalance();
+		account.setAmount(balance+amount);
+		return amount+" was successfully added to " + accountName + " account";
 	}
 }

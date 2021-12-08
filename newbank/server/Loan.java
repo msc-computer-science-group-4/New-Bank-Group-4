@@ -30,6 +30,10 @@ public class Loan {
 		return loanName;
 	}
 
+	public String getborrowerName() {
+		return borrowerName;
+	}
+
 	public int getLoanTerm() {
 		return loanTerm;
 	}
