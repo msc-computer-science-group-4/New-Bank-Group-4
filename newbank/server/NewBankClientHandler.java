@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.time.LocalDate;
 
 public class NewBankClientHandler extends Thread{
 
@@ -292,11 +293,80 @@ public class NewBankClientHandler extends Thread{
 					out.println(response);
 
 				} else if (request.equals("6")){
-					out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
-					String authNumber = in.readLine();
-					request += "," + authNumber;
+					clearScreen();
+
+					out.println("Enter the number next to the name of the Account you would like to offer loan from:  ");
+					String accountName = selectAccount(customer);
+
+					String responseBalance = bank.processRequest(customer, "CHECKACCOUNTBALANCE,"+accountName);
+					Double balance = Double.parseDouble(responseBalance);
+
+					out.println("Enter the Amount you would like to offer:  ");
+					String loanAmount = in.readLine();
+
+					boolean valid = false;
+					while(!valid){
+						try{
+							double check = Double.parseDouble(loanAmount);
+							if (check <= balance && check >= 0) {
+								valid = true;
+							} else if (check > balance) {
+								out.println("There are not enough funds on the account, enter a smaller amount:  ");
+								loanAmount = in.readLine();
+							}
+						}catch (NumberFormatException ex) {
+							out.println("Amount is invalid, please try again.\n");
+							out.println("Enter the Amount you would like to transfer:  ");
+							loanAmount = in.readLine();
+						}
+					}
+
+					out.println("Enter the interest rate:  ");
+					String rate = in.readLine();
+					boolean validRate = false;
+
+					while(!validRate){
+						try{
+							double check = Double.parseDouble(rate);
+							if (check >= 0) {
+								validRate = true;
+							} else {
+								out.println("Rate is invalid, please try again.");
+								rate = in.readLine();
+							}
+						}catch (NumberFormatException ex) {
+							out.println("Rate is invalid, please try again.\n");
+							out.println("Enter the interest rate you would like to offer:  ");
+							rate = in.readLine();
+						}
+					}
+
+					out.println("Enter the loan term (qty of days):  ");
+					String loanTerm = in.readLine();
+					boolean validLoanTerm = false;
+
+					while(!validLoanTerm){
+						try{
+							int check = Integer.parseInt(loanTerm);
+							if (check >= 0) {
+								validLoanTerm = true;
+							} else {
+								out.println("Term is invalid, please try again.");
+								loanTerm = in.readLine();
+							}
+						}catch (NumberFormatException ex) {
+							out.println("Term is invalid, please try again.\n");
+							out.println("Enter the loan term (qty of days):  ");
+							loanTerm = in.readLine();
+						}
+					}
+					//String loanName = "loan-" + customer + "-" + LocalDate.now();
+
+					request = "OFFERLOAN," + accountName + "," + loanAmount + "," + rate + "," + loanTerm + ",";
+
 					String response = bank.processRequest(customer, request);
 					out.println(response);
+					returnToMenu();
 
 				} else if (request.equals("7")){
 					// cancel a scheduled transfer
@@ -382,6 +452,7 @@ public class NewBankClientHandler extends Thread{
 				"3. Transfer to another owned account\n" +
 				"4. Create New Account\n" +
 				"5. Close an Account\n" +
+				"6. Offer loan" +
 				"8. Add Funds to an Account\n" +
 				"9. Take out Loan\n" +
 				"10. Log out\n" +

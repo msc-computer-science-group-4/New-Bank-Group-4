@@ -7,13 +7,15 @@ public class Loan {
 	double interestRate;
 	int loanTerm;
 	String borrowerName;
+	String creditorUserName;
 
-	public Loan(String loanName, double loanAmount, int loanTerm, double interestRate) {
+	public Loan(String loanName, double loanAmount, int loanTerm, double interestRate, String creditorUserName) {
 		this.loanName = loanName;
 		this.loanAmount = loanAmount;
 		this.loanTerm = loanTerm;
 		this.interestRate = interestRate;
 		this.borrowerName = "NONE";
+		this.creditorUserName = creditorUserName;
 		// initiative payoff amount to be the same as the initial Loan amount
 		this.payoffAmount = loanAmount;
 	}
@@ -21,6 +23,8 @@ public class Loan {
 	public double getLoanAmount() {
 		return loanAmount;
 	}
+
+	public String getCreditorUserName() {return creditorUserName; }
 
 	public String getLoanName() {
 		return loanName;

@@ -113,6 +113,9 @@ public class NewBank {
 							+ "' and transferred the remaining " + remainingBalance +
 							"$ to account '" + transferToAccount.getAccountName() + "'.";
 
+				case "OFFERLOAN":
+
+					return "Successfully added a new loan offer.";
 
 				default : return "FAIL";
 
@@ -287,4 +290,21 @@ public class NewBank {
 			}
 		// return output
 		return s; }
+
+	private String offerLoan(Customer customer, Customer receiver, Double loanAmount, Double rate, int loanTerm) {
+		try {
+			Loan newLoan = new
+			Account fromAccount = currentCustomer.getAccount(CustomerAccountName);
+			Double balanceFromAccount = fromAccount.getCurrentBalance();
+
+			Account toAccount = receiver.getAccountIBAN(receiverIban);
+			Double balanceToAccount = toAccount.getCurrentBalance();
+			fromAccount.setAmount(balanceFromAccount-transferableSum);
+			toAccount.setAmount(balanceToAccount+transferableSum);
+			return "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "fail";
+		}
+	}
 }

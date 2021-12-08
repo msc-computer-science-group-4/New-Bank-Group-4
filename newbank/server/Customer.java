@@ -14,7 +14,7 @@ public class Customer {
 		accounts = new ArrayList<>();
 
 		loans = new ArrayList<>();
-		customerID = new CustomerID(customerName, userName, password, iban);
+		customerID = new CustomerID(customerName, userName, password);
 
 		Name = customerID.getName();
 	}
