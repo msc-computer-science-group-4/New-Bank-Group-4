@@ -110,9 +110,20 @@ public class NewBank {
 					if (res == "success") {
 						return "Successfully sent " +transferableSum+ "$ from your account '" + input.get(4)
 								+ "' to account " + input.get(2) + ".";
-					} else {
+					}
+					else if (res == "This IBAN does not match any of the receiver's accounts IBAN."){
+						return res;
+					}
+					else {
 						return "Something went wrong. Please, try again later.";
 					}
+
+				case "TRANSFERTOSELF":
+					Account receiverAccount = currentCustomer.getAccount(input.get(1));
+					Account fromAccount = currentCustomer.getAccount(input.get(2));
+					Double amountToTransfer = Double.parseDouble(input.get(3));
+					return transferToSelf(fromAccount, receiverAccount, amountToTransfer);
+
 				case "ADDMONEY":
 					return addMoneyToAccount(customer, input.get(1), Double.parseDouble(input.get(2)));
 
@@ -120,11 +131,8 @@ public class NewBank {
 					Account closingAccount = currentCustomer.getAccount(input.get(1));
 					double remainingBalance = closingAccount.getCurrentBalance();
 					Account transferToAccount = currentCustomer.getAccount(input.get(2));
-					closingAccount.transfer(transferToAccount, closingAccount.getCurrentBalance());
-					currentCustomer.closeAccount(closingAccount);
-					return "Successfully closed account '" + closingAccount.getAccountName()
-							+ "' and transferred the remaining " + remainingBalance +
-							"$ to account '" + transferToAccount.getAccountName() + "'.";
+					return transferToSelf(closingAccount, transferToAccount, remainingBalance) + "\n" +
+							currentCustomer.closeAccount(closingAccount);
 
 				case "OFFERLOAN":
 					String loanName = "loan-" + customer.getUserName() + '-' + LocalDate.now();
@@ -363,6 +371,10 @@ public class NewBank {
 			Double balanceFromAccount = fromAccount.getCurrentBalance();
 
 			Account toAccount = receiver.getAccountIBAN(receiverIban);
+
+			if (toAccount == null){
+				return "This IBAN does not match any of the receiver's accounts IBAN.";
+			}
 			Double balanceToAccount = toAccount.getCurrentBalance();
 			fromAccount.setAmount(balanceFromAccount-transferableSum);
 			toAccount.setAmount(balanceToAccount+transferableSum);
@@ -374,12 +386,23 @@ public class NewBank {
 	}
 
 	/**
+	 * This method works similarly to the above method but is for transferring between accounts for the same user. This
+	 * method also replaces the transfer() method that was in the Account class.
+	 */
+	private String transferToSelf(Account fromAccount, Account toAccount, Double transferableSum) {
+		fromAccount.withdraw(transferableSum);
+		toAccount.deposit(transferableSum);
+		return "Successfully transferred " + String.valueOf(transferableSum) + "$ from account '" + fromAccount.getAccountName()
+				+ "' to account '" + toAccount.getAccountName() + "'.";
+	}
+
+	/**
 	 * This method set a new balance for a selected account.
 	 */
 	private String addMoneyToAccount(CustomerID customer, String accountName, double amount) {
 		Account account = customers.get(customer.getUserName()).getAccount(accountName);
 		double balance = account.getCurrentBalance();
 		account.setAmount(balance+amount);
-		return amount+" was successfully added to " + accountName + " account";
+		return "Successfully added " + amount + "$ to account: '" + accountName + "'.";
 	}
 }

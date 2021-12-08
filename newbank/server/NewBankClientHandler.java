@@ -127,9 +127,14 @@ public class NewBankClientHandler extends Thread{
 					// added a check for existence of customer to transfer to
 					boolean isCustomer = false;
 					while(!isCustomer){
-						if(bank.getCustomers().containsKey(receiver)){
+						if(receiver.equals(customer.getUserName())){
+							out.println("Please enter the username of a user other than yourself!");
+							receiver = in.readLine();
+						}
+						else if(bank.getCustomers().containsKey(receiver)){
 							isCustomer = true;
-						}else{
+						}
+						else{
 							out.println("Please enter a valid username!");
 							receiver = in.readLine();
 						}
@@ -138,11 +143,11 @@ public class NewBankClientHandler extends Thread{
 					out.println("Enter the IBAN of the customer Account which is receiving the funds: ");
 					String iban = in.readLine();
 
-					out.println("Enter the number next to the name of the Account you would like to transfer from:  ");
+					out.println("\nEnter the number next to the name of the Account you would like to transfer from:  ");
 					String accountName = selectAccount(customer);
 
 					String responseBalance = bank.processRequest(customer, "CHECKACCOUNTBALANCE,"+accountName);
-					Double balance = Double.parseDouble(responseBalance);
+					double balance = Double.parseDouble(responseBalance);
 
 					out.println("Enter the Amount you would like to transfer:  ");
 					String transferableSum = in.readLine();
@@ -151,10 +156,15 @@ public class NewBankClientHandler extends Thread{
 					while(!valid){
 						try{
 							double check = Double.parseDouble(transferableSum);
-							if (check <= balance && check >= 0) {
+							if (check <= balance && check > 0) {
 								valid = true;
 							} else if (check > balance) {
 								out.println("There are not enough funds on the account, enter a smaller amount:  ");
+								transferableSum = in.readLine();
+							}
+							else{
+								out.println("Amount is invalid, please try again.\n");
+								out.println("Enter the Amount you would like to transfer:  ");
 								transferableSum = in.readLine();
 							}
 						}catch (NumberFormatException ex) {
@@ -178,6 +188,15 @@ public class NewBankClientHandler extends Thread{
 					out.println("Enter the Account that you want to transfer to:  ");
 					String account_to = selectAccount(customer);
 
+					while(account_from.equals(account_to)){
+						out.println("The receiver account must be different from the sender account!\n");
+						out.println("Please enter the receiver account:");
+						account_to = selectAccount(customer);
+					}
+
+					String responseBalance = bank.processRequest(customer, "CHECKACCOUNTBALANCE,"+ account_from);
+					double balance = Double.parseDouble(responseBalance);
+
 					out.println("Enter the Amount to transfer:  ");
 					String transferableSum = in.readLine();
 
@@ -185,7 +204,17 @@ public class NewBankClientHandler extends Thread{
 					while(!valid){
 						try{
 							int check = Integer.parseInt(transferableSum);
-							valid = true;
+							if (check <= balance && check > 0) {
+								valid = true;
+							} else if (check > balance) {
+								out.println("There are not enough funds on the account, enter a smaller amount:  ");
+								transferableSum = in.readLine();
+							}
+							else{
+								out.println("Amount is invalid, please try again.\n");
+								out.println("Enter the Amount you would like to transfer:  ");
+								transferableSum = in.readLine();
+							}
 						}catch (NumberFormatException ex) {
 							out.println("Invalid input, please try again.\n");
 							out.println("Enter the Amount to transfer:  ");
@@ -196,7 +225,7 @@ public class NewBankClientHandler extends Thread{
 					out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
 					String authNumber = in.readLine();
 
-					request += "," + account_from + "," + account_to + "," + transferableSum + "," + authNumber;
+					request = "TRANSFERTOSELF" + "," + account_to + "," + account_from + "," + transferableSum + "," + authNumber;
 
 					String response = bank.processRequest(customer, request);
 					out.println(response);
@@ -239,7 +268,7 @@ public class NewBankClientHandler extends Thread{
 
 							// do not allow transferring to same account before closing
 							while (accountToTransferFundsTo.equals(accountToClose)){
-								out.println("Can't be the same account! Please choose a different account: to transfer to\n");
+								out.println("Cannot be the same account! Please choose a different account: to transfer to:\n");
 								accountToTransferFundsTo = selectAccount(customer);
 							}
 
@@ -396,7 +425,7 @@ public class NewBankClientHandler extends Thread{
 
 				} else if (request.equals("6")){ // Adding funds to an Account
 					clearScreen();
-					out.println("Enter the Account you wish to add money:  ");
+					out.println("Enter the number next to the Account you want to add money to:  ");
 					String account = selectAccount(customer);
 
 					out.println("Enter the Amount to add:  ");
@@ -406,7 +435,7 @@ public class NewBankClientHandler extends Thread{
 					while(!valid){
 						try{
 							int check = Integer.parseInt(amountToAdd);
-							if (check>=0) {
+							if (check > 0) {
 								valid = true;
 							} else {
 								out.println("The amount must be positive, please try again.\n");

@@ -69,21 +69,6 @@ public class Account {
 	{
 		currentBalance = currentBalance +d;
 	}
-	//transfer from current account to the account passed.
-	public void transfer(Account acc, double amount)
-	{
-		if(amount<=this.currentBalance)
-		{
-			acc.setAmount(acc.getCurrentBalance()+amount);
-			this.currentBalance -=amount;
-			System.out.println("Amount transferred successfully.");
-		}
-		else
-		{
-			System.out.println("Sorry, You dont have enough funds");
-
-		}
-	}
 
 	public void setAccountName(String name) {
 		this.accountName = name;
