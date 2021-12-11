@@ -90,8 +90,20 @@ public class NewBank {
 				case "DISPLAYSELECTEDNAMEACCOUNT":
 					return getSelectedAccountName(customer, Integer.parseInt(input.get(1)));
 
+				case "DISPLAYSELECTEDLOANNAME":
+					return getSelectedLoanName(Integer.parseInt(input.get(1)));
+
 				case "NUMBEROFUSERACCOUNTS":
 					return String.valueOf(currentCustomer.getAccounts().size());
+
+				case "NUMBEROFOFFEREDLOANS":
+					int numberOfOfferedLoans = 0;
+					for (Loan loan : loans){
+						if (loan.borrowerName.equals("NONE")){
+							numberOfOfferedLoans += 1;
+						}
+					}
+					return String.valueOf(numberOfOfferedLoans);
 
 				case "4" : return createNewAccount(customer, request);
 
@@ -141,10 +153,49 @@ public class NewBank {
 					int loanTerm = Integer.parseInt(input.get(4));
 					String response = offerLoan(customer, loanName, loanAmount, rate, loanTerm, input.get(1));
 					if (response == "success") {
-						return "Successfully added " + loanName + " loan offer in the amount of " + loanAmount + "$ for a period of " + loanTerm + " days.";
+						return "Successfully added the loan '" + loanName + "' over " + loanAmount +
+								"$ with a period of " + loanTerm + " days to the ledger of offered loans.\n";
 					} else {
 						return "Something went wrong. Please, try again later.";
 					}
+
+				case "CHANGELOANSTATUS":
+					for (Loan loan : loans){
+						if (loan.getLoanName().equals(input.get(1))){
+							loan.setBorrowerName(customer.getUserName());
+						}
+					}
+					return "success";
+
+				case "TRANSFERLOAN":
+					String fundReceivingAccount = input.get(1);
+					for (Loan loan : loans){
+						if (loan.getLoanName().equals(input.get(2))){
+							addMoneyToAccount(customer, fundReceivingAccount, loan.getLoanAmount());
+							return "The Loan amount of " + String.valueOf(loan.getLoanAmount()) +
+									"$ was added to the account: '" + fundReceivingAccount + "'. \n" +
+									"You have to repay the creditor the above stated Loan amount plus " +
+									"interest within the next " + String.valueOf(loan.getLoanTerm()) + " days.";
+						}
+					}
+					return "fail";
+
+				case "WITHDRAWLOAN":
+					for (Loan loan : loans){
+						if (loan.getLoanName().equals(input.get(1)) && loan.getborrowerName().equals("NONE")){
+							// add withheld money back to creditors account
+							//Account refundAccount = currentCustomer.getAccount(input.get(2));
+							addMoneyToAccount(customer, input.get(2), loan.getLoanAmount());
+							//then remove loan from loan list
+							loans.remove(loan);
+							return "Successfully deleted your offered loan: '" + loan.getLoanName() +
+									"' and added the loan amount of " + loan.getLoanAmount() + "$ back to account: '" +
+									input.get(2) + "'.";
+						}
+					}
+					return "fail";
+
+
 
 				default : return "FAIL";
 
@@ -261,6 +312,14 @@ public class NewBank {
 		ArrayList<Account> accounts = customers.get(customer.getUserName()).getAllAccounts();
 		return accounts.get(accountIndex).getAccountName();
 	}
+
+	/**
+	 * This method searches for the selected Loan by index and returns the name of the found Loan
+	 */
+	private String getSelectedLoanName(Integer loanIndex) {
+		return loans.get(loanIndex).getLoanName();
+	}
+
 
 	/**
 	 * This method returns table of offered (all loans that haven't been taken yet) or taken loans.

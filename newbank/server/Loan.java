@@ -44,6 +44,10 @@ public class Loan {
 
 	public double getPayoffAmount() { return payoffAmount; }
 
+	public void setBorrowerName(String borrowerName) {
+		this.borrowerName = borrowerName;
+	}
+
 	//add interest over a certain time. Each interest amount is compounded after a number of seconds passed
 	public void addInterest()
 	{
