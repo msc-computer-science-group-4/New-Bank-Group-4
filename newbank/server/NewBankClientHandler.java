@@ -182,7 +182,7 @@ public class NewBankClientHandler extends Thread{
 
 				} else if (request.equals("3")){
 					clearScreen();
-					out.println("Enter the Account that you want to transfer from:  ");
+					out.println("Enter the Number next to the Account that you want to transfer from:  ");
 					String account_from = selectAccount(customer);
 
 					out.println("Enter the Account that you want to transfer to:  ");
@@ -330,7 +330,7 @@ public class NewBankClientHandler extends Thread{
 				} else if (request.equals("8")){
 					clearScreen();
 
-					out.println("Enter the number next to the name of the Account you would like to offer loan from:  ");
+					out.println("Enter the number next to the name of the Account you would like to offer a loan from: ");
 					String accountName = selectAccount(customer);
 
 					String responseBalance = bank.processRequest(customer, "CHECKACCOUNTBALANCE,"+accountName);
@@ -343,20 +343,24 @@ public class NewBankClientHandler extends Thread{
 					while(!valid){
 						try{
 							double check = Double.parseDouble(loanAmount);
-							if (check <= balance && check >= 0) {
+							if (check <= balance && check > 0) {
 								valid = true;
 							} else if (check > balance) {
-								out.println("There are not enough funds on the account, enter a smaller amount:  ");
+								out.println("There are not enough funds on the account, please enter a smaller amount:  ");
+								loanAmount = in.readLine();
+							} else{
+								out.println("Amount is invalid, please try again.\n");
+								out.println("Enter the Amount you would like to offer as a loan:  ");
 								loanAmount = in.readLine();
 							}
 						}catch (NumberFormatException ex) {
 							out.println("Amount is invalid, please try again.\n");
-							out.println("Enter the Amount you would like to transfer:  ");
+							out.println("Enter the Amount you would like to offer as a loan:  ");
 							loanAmount = in.readLine();
 						}
 					}
 
-					out.println("Enter the interest rate:  ");
+					out.println("Enter the interest rate you want to charge in (e.g., type 0.035 for 3.5%): ");
 					String rate = in.readLine();
 					boolean validRate = false;
 
@@ -371,12 +375,12 @@ public class NewBankClientHandler extends Thread{
 							}
 						}catch (NumberFormatException ex) {
 							out.println("Rate is invalid, please try again.\n");
-							out.println("Enter the interest rate you would like to offer:  ");
+							out.println("Enter the interest rate you want to charge:  ");
 							rate = in.readLine();
 						}
 					}
 
-					out.println("Enter the loan term (qty of days):  ");
+					out.println("Enter the loan term (number of days):  ");
 					String loanTerm = in.readLine();
 					boolean validLoanTerm = false;
 
@@ -391,7 +395,7 @@ public class NewBankClientHandler extends Thread{
 							}
 						}catch (NumberFormatException ex) {
 							out.println("Term is invalid, please try again.\n");
-							out.println("Enter the loan term (qty of days):  ");
+							out.println("Enter the loan term (number of days):  ");
 							loanTerm = in.readLine();
 						}
 					}
@@ -401,6 +405,8 @@ public class NewBankClientHandler extends Thread{
 
 					String response = bank.processRequest(customer, request);
 					out.println(response);
+					out.println("NOTE: The loan amount has been withdrawn from your account and is withheld until someone takes out your loan offer.");
+					out.println("You can withdraw your loan offer at any time while it is not taken out by another customer.");
 					returnToMenu();
 
 				} else if (request.equals("7")){
@@ -412,8 +418,8 @@ public class NewBankClientHandler extends Thread{
 					String loanTypeIndex = in.readLine();
 
 					while (!(loanTypeIndex.equals("1")) && (!(loanTypeIndex.equals("2")))) {
-						out.println("Invalid account type.");
-						out.println("Please enter either 1 to create a Current Account or 2 to create a Savings Account.");
+						out.println("Invalid Loan option.");
+						out.println("Please enter either 1 to inspect your taken loans or 2 to see your offered loans: ");
 						loanTypeIndex = in.readLine();
 					}
 
@@ -461,24 +467,65 @@ public class NewBankClientHandler extends Thread{
 				// showing all available loans
 				else if (request.equals("9")) {
 					clearScreen();
-					String loanDashboard = bank.processRequest(customer, "5");
-					out.println(loanDashboard);
+					out.println("Enter the number next to the loan you want to take out: ");
+					String loanName = selectLoan(customer);
+
+					// user should not be able to take out loans offered by themselves
+					while(loanName.contains(customer.getUserName())){
+						out.println("You cannot take out loans offered by yourself!\n");
+						out.println("Enter the number next to the loan you want to take out: ");
+						loanName = selectLoan(customer);
+					}
+
+					// change loan status from offered to taken by changing the borrower Name assigned to the selected loan
+					String loanStatusRequest = "CHANGELOANSTATUS" + "," + loanName + "," + "offered";
+					bank.processRequest(customer, loanStatusRequest);
+
+					out.println("Please Select the number next to the Account the funds should be added to: ");
+					String fundReceivingAccount = selectAccount(customer);
+
+					String loanTransferRequest = "TRANSFERLOAN" + "," + fundReceivingAccount + "," + loanName;
+					String loanTransferResponse = bank.processRequest(customer, loanTransferRequest);
+
+					out.println("You have successfully taken out the loan with the Name: '" + loanName + "'.");
+					out.println(loanTransferResponse);
+					returnToMenu();
+				}
+				else if (request.equals("10")) {
+					clearScreen();
+					out.println("Please Select the number next to the loan you would like to withdraw: ");
+					// let user select the loan he wants to withdraw from list of offered loans
+					String loanToWithdraw = selectLoan(customer);
+
+					// user should only be able to withdraw his/her own loans
+					while(!loanToWithdraw.contains(customer.getUserName())){
+						out.println("You can only withdraw loans offered by yourself!\n");
+						out.println("Please Select the number next to the loans you would like to withdraw: ");
+						loanToWithdraw = selectLoan(customer);
+					}
+
+					out.println("Enter the number next to the name of the Account you would like to add the funds back to:  ");
+					String loanRefundAccount = selectAccount(customer);
+
+					String withdrawLoanRequest = "WITHDRAWLOAN" + "," + loanToWithdraw + "," + loanRefundAccount;
+					String withdrawLoanResponse = bank.processRequest(customer, withdrawLoanRequest);
+					out.println(withdrawLoanResponse);
 					returnToMenu();
 				}
 
-				else if (request.equals("10")) {
+				else if (request.equals("11")) {
 					clearScreen();
 					out.println("Logging out...");
 					sleep();
 					run();
 				}
 
-				else if(request.equals("11")){
+				else if(request.equals("12")){
 					out.println("Thank you and have a nice day!");
 					System.exit(0);
 				}
 
-				else if(!request.equalsIgnoreCase("11")) {
+				else if(!request.equalsIgnoreCase("12")) {
 					clearScreen();
 					out.println("Invalid Entry\n");
 				} else {
@@ -512,11 +559,12 @@ public class NewBankClientHandler extends Thread{
 				"4. Create New Account\n" +
 				"5. Close an Account\n" +
 				"6. Add Funds to an Account\n" +
-				"7. Show all loans\n" +
+				"7. Show NewBank Loan Ledger (all customers)\n" +
 				"8. Offer loan\n" +
-				"9. Take out Loan\n" +
-				"10. Log out\n" +
-				"11. Quit\n";
+				"9. Take out a Loan\n" +
+				"10. Withdraw a Loan Offer\n" +
+				"11. Log out\n" +
+				"12. Quit\n";
 	}
 
 	public void clearScreen() {
@@ -568,5 +616,39 @@ public class NewBankClientHandler extends Thread{
 
 		return selectedAccountName;
 	}
+
+	/**
+	 * This method displays a list of all loans currently offered by NewBank customers,
+	 * reads the index of the selected loan and returns the name of the selected loan
+	 */
+	private String selectLoan(CustomerID customer) throws Exception {
+		String selectableLoans = bank.processRequest(customer, "SHOWLOANS,offered");
+		String numberOfLoans = bank.processRequest(customer, "NUMBEROFOFFEREDLOANS");
+		String option = "";
+		boolean b = true;
+		while (b){
+			try{
+				out.println(selectableLoans);
+				option = in.readLine();
+				option = option.trim();
+				while (Integer.parseInt(option) > Integer.parseInt(numberOfLoans) || Integer.parseInt(option) <= 0){
+					out.println("Please select a number next to a Loan from the list: ");
+					out.println(selectableLoans);
+					option = in.readLine();
+					option = option.trim();
+				}
+				b = false;
+			}catch (NumberFormatException | IOException ex) {
+				out.println("Please enter an integer only!");
+			}
+		}
+		// Retrieve selected Loan Name
+		String request = "DISPLAYSELECTEDLOANNAME, " + (Integer.parseInt(option)-1);
+		String selectedLoanName = bank.processRequest(customer, request);
+
+		return selectedLoanName;
+	}
+
+
 
 }
