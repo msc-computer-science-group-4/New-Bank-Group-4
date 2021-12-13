@@ -68,13 +68,26 @@ In order to run the NewBank Java application, you will first need to make sure y
 5 - Open a second terminal from the root of the New-Bank-Group-4 project
 6 - Enter the `javac newbank/client/ExampleClient.java ` command
 7 - Enter `java newbank/client/ExampleClient.java ` command on the same second terminal
-8 - You should now be presented to create a new user or sign in
+8 - You should now be presented to create a new user or sign in on the second terminal
+9 - Move on to `Create a new user` or `Logging in`sections of this documentation for more information
 
 Note: if you want to close the app at this point you can just enter `CTRL + C` 
 
 ## Create a new user
 
+
 ## Logging in
 
-## User Protocals & Commands
+## Logged in User Protocals & Commands
 
+1. Show My Accounts
+2. Transfer to another user
+3. Transfer to another owned account
+4. Create New Account
+5. Close an Account
+6. Add Funds to an Account
+7. Show NewBank Loan Ledger (all customers)
+8. Offer loan
+9. Take out a Loan
+10. Withdraw a Loan Offer
+11. Log out
