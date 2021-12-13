@@ -72,5 +72,9 @@ In order to run the NewBank Java application, you will first need to make sure y
 
 Note: if you want to close the app at this point you can just enter `CTRL + C` 
 
-## User Commands
+## Create a new user
+
+## Logging in
+
+## User Protocals & Commands
 
