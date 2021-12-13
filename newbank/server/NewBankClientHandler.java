@@ -182,13 +182,13 @@ public class NewBankClientHandler extends Thread{
 
 				} else if (request.equals("3")){
 					clearScreen();
-					out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
+					out.println("Please enter the 6-digit authentication number presented in your Google Authenticator Application");
 					String authenticationDigit = in.readLine();
 					request += "," + authenticationDigit;
 					String response = bank.processRequest(customer, request);
 					out.println(response);
 					while (response.equals("Not able to Proceed to next action: Authentication fail")){
-						out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
+						out.println("Please enter the 6-digit authentication number presented in your Google Authenticator Application");
 						authenticationDigit = in.readLine();
 						request += "," + authenticationDigit;
 						response = bank.processRequest(customer, request);
@@ -234,7 +234,7 @@ public class NewBankClientHandler extends Thread{
 						}
 					}
 
-					out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
+					out.println("Please enter the 6-digit authentication number presented in your Google Authenticator Application");
 					String authenticationNumber = in.readLine();
 
 					request = "TRANSFERTOSELF" + "," + account_to + "," + account_from + "," + transferableSum + "," + authenticationNumber;
@@ -467,7 +467,7 @@ public class NewBankClientHandler extends Thread{
 						}
 					}
 
-					out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
+					out.println("Please enter the 6-digit authentication number presented in your Google Authenticator Application");
 					String authenticationNumber = in.readLine();
 
 					String req = "ADDMONEY," + account + "," + amountToAdd + "," + authenticationNumber;
