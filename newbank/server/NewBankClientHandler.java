@@ -1,14 +1,11 @@
 
 package newbank.server;
 
-import newbank.client.ExampleClient;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.time.LocalDate;
 
 public class NewBankClientHandler extends Thread{
 
@@ -152,6 +149,9 @@ public class NewBankClientHandler extends Thread{
 					out.println("Enter the Amount you would like to transfer:  ");
 					String transferableSum = in.readLine();
 
+					out.println("Please enter the 6-digit authentication number presented in your Google Authenticator Application");
+					String authenticationDigit = in.readLine();
+
 					boolean valid = false;
 					while(!valid){
 						try{
@@ -174,7 +174,7 @@ public class NewBankClientHandler extends Thread{
 						}
 					}
 
-					request = "TRANSFERTOUSER," + receiver + "," + iban + "," + transferableSum + "," + accountName + ",";
+					request = "TRANSFERTOUSER," + receiver + "," + iban + "," + transferableSum + "," + accountName + "," + authenticationDigit;
 
 					String response = bank.processRequest(customer, request);
 					out.println(response);
@@ -182,6 +182,18 @@ public class NewBankClientHandler extends Thread{
 
 				} else if (request.equals("3")){
 					clearScreen();
+					out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
+					String authenticationDigit = in.readLine();
+					request += "," + authenticationDigit;
+					String response = bank.processRequest(customer, request);
+					out.println(response);
+					while (response.equals("Not able to Proceed to next action: Authentication fail")){
+						out.println("Please type in the 6-digit authentication number shown in your Google Authenticator App");
+						authenticationDigit = in.readLine();
+						request += "," + authenticationDigit;
+						response = bank.processRequest(customer, request);
+						out.println(response);
+					}
 					out.println("Enter the Number next to the Account that you want to transfer from:  ");
 					String account_from = selectAccount(customer);
 
@@ -227,7 +239,7 @@ public class NewBankClientHandler extends Thread{
 
 					request = "TRANSFERTOSELF" + "," + account_to + "," + account_from + "," + transferableSum + "," + authNumber;
 
-					String response = bank.processRequest(customer, request);
+					response = bank.processRequest(customer, request);
 					out.println(response);
 					returnToMenu();
 
@@ -520,10 +532,6 @@ public class NewBankClientHandler extends Thread{
 					run();
 				}
 
-				else if(request.equals("12")){
-					out.println("Thank you and have a nice day!");
-					System.exit(0);
-				}
 
 				else if(!request.equalsIgnoreCase("12")) {
 					clearScreen();
@@ -563,8 +571,7 @@ public class NewBankClientHandler extends Thread{
 				"8. Offer loan\n" +
 				"9. Take out a Loan\n" +
 				"10. Withdraw a Loan Offer\n" +
-				"11. Log out\n" +
-				"12. Quit\n";
+				"11. Log out\n";
 	}
 
 	public void clearScreen() {
