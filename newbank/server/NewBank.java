@@ -58,6 +58,13 @@ public class NewBank {
 		return loans;
 	}
 
+	public boolean twoFactorAuthentication(int authenticationNumber) throws Exception {
+		//Key provided by https://github.com/j256/two-factor-auth
+		String base32Secret = "NY4A5CPJZ46LXZCP";
+		boolean correctValue = TwoFactorAuthentication.validateCurrentNumber(base32Secret, authenticationNumber, TwoFactorAuthentication.DEFAULT_TIME_STEP_SECONDS*1000);
+		return correctValue;
+	}
+
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
 		for (Map.Entry<String, Customer> customer: customers.entrySet()){
 			String username = customer.getValue().getCustomerID().getUserName();
@@ -428,7 +435,6 @@ public class NewBank {
 		try {
 			Account fromAccount = currentCustomer.getAccount(CustomerAccountName);
 			Double balanceFromAccount = fromAccount.getCurrentBalance();
-
 			Account toAccount = receiver.getAccountIBAN(receiverIban);
 
 			if (toAccount == null){
