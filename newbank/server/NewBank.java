@@ -58,10 +58,10 @@ public class NewBank {
 		return loans;
 	}
 
-	public boolean twoFactorAuthentication(int authNumber) throws Exception {
+	public boolean twoFactorAuthentication(int authenticationNumber) throws Exception {
 		//Key provided by https://github.com/j256/two-factor-auth
 		String base32Secret = "NY4A5CPJZ46LXZCP";
-		boolean correctValue = TwoFactorAuthentication.validateCurrentNumber(base32Secret, authNumber, TwoFactorAuthentication.DEFAULT_TIME_STEP_SECONDS*1000);
+		boolean correctValue = TwoFactorAuthentication.validateCurrentNumber(base32Secret, authenticationNumber, TwoFactorAuthentication.DEFAULT_TIME_STEP_SECONDS*1000);
 		return correctValue;
 	}
 

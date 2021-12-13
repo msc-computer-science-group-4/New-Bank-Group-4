@@ -61,7 +61,7 @@ public class TwoFactorAuthentication {
     /**
      * Validate a given secret-number using the secret base-32 string. This allows you to set a window in milliseconds
      * to account for people being close to the end of the time-step. For example, if windowMillis is 10000 then this
-     * method will check the authNumber against the generated number from 10 seconds before now through 10 seconds after
+     * method will check the authenticationNumber against the generated number from 10 seconds before now through 10 seconds after
      * now.
      *
      * <p>
@@ -70,16 +70,16 @@ public class TwoFactorAuthentication {
      *
      * @param base32Secret
      *            Secret string encoded using base-32 that was used to generate the QR code or shared with the user.
-     * @param authNumber
+     * @param authenticationNumber
      *            Time based number provided by the user from their authenticator application.
      * @param windowMillis
      *            Number of milliseconds that they are allowed to be off and still match. This checks before and after
      *            the current time to account for clock variance. Set to 0 for no window.
-     * @return True if the authNumber matched the calculated number within the specified window.
+     * @return True if the authenticationNumber matched the calculated number within the specified window.
      */
-    public static boolean validateCurrentNumber(String base32Secret, int authNumber, int windowMillis)
+    public static boolean validateCurrentNumber(String base32Secret, int authenticationNumber, int windowMillis)
             throws GeneralSecurityException {
-        return validateCurrentNumber(base32Secret, authNumber, windowMillis, System.currentTimeMillis(),
+        return validateCurrentNumber(base32Secret, authenticationNumber, windowMillis, System.currentTimeMillis(),
                 DEFAULT_TIME_STEP_SECONDS);
     }
 
@@ -88,7 +88,7 @@ public class TwoFactorAuthentication {
      *
      * @param base32Secret
      *            Secret string encoded using base-32 that was used to generate the QR code or shared with the user.
-     * @param authNumber
+     * @param authenticationNumber
      *            Time based number provided by the user from their authenticator application.
      * @param windowMillis
      *            Number of milliseconds that they are allowed to be off and still match. This checks before and after
@@ -97,9 +97,9 @@ public class TwoFactorAuthentication {
      *            Time in milliseconds.
      * @param timeStepSeconds
      *            Time step in seconds. The default value is 30 seconds here. See {@link #DEFAULT_TIME_STEP_SECONDS}.
-     * @return True if the authNumber matched the calculated number within the specified window.
+     * @return True if the authenticationNumber matched the calculated number within the specified window.
      */
-    public static boolean validateCurrentNumber(String base32Secret, int authNumber, int windowMillis, long timeMillis,
+    public static boolean validateCurrentNumber(String base32Secret, int authenticationNumber, int windowMillis, long timeMillis,
                                                 int timeStepSeconds) throws GeneralSecurityException {
         long fromTimeMillis = timeMillis;
         long toTimeMillis = timeMillis;
@@ -110,7 +110,7 @@ public class TwoFactorAuthentication {
         long timeStepMillis = timeStepSeconds * 1000;
         for (long millis = fromTimeMillis; millis <= toTimeMillis; millis += timeStepMillis) {
             int generatedNumber = generateNumber(base32Secret, millis, timeStepSeconds);
-            if (generatedNumber == authNumber) {
+            if (generatedNumber == authenticationNumber) {
                 return true;
             }
         }
