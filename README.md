@@ -12,7 +12,7 @@ A repository created to store the code and version control the New Bank banking 
 
 [Mahtab Bahman Nejad](https://github.com/mahtabnejad90)
 
-[Veronika Vysokozerskaia](https://github.com/matiek8)
+[Veronika Vysokozerskaia](https://github.com/matiek8) (Second GitHub username for Veronika Vysokozerskaia: https://github.com/RobynIvy)
 
 [Rachel Berryman](https://github.com/rachelkberryman)
 
