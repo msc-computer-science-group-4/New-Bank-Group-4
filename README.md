@@ -67,7 +67,7 @@ In order to run the NewBank Java application, you will first need to make sure y
 4. Then you should get a message on the terminal stating that the New Bank Server is listening to a local port number. Leave this terminal open and move on to the next step
 5. Open a second terminal from the root of the New-Bank-Group-4 project
 6. Enter the `javac newbank/client/ExampleClient.java ` command
-7. Enter `java newbank/client/ExampleClient.java ` command on the same second terminal
+7. Enter `java newbank/client/ExampleClient` command on the same second terminal
 8. You should now be presented to create a new user or sign in on the second terminal
 9. Move on to `Create a new user` or `Logging in`sections of this documentation for more information
 
