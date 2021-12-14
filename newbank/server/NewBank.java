@@ -127,7 +127,7 @@ public class NewBank {
 					Double transferableSum = Double.parseDouble(input.get(3));
 					String res = transferToUser(currentCustomer, receiver, transferableSum,input.get(4), input.get(2));
 					if (res == "success") {
-						return "Successfully sent " +transferableSum+ "$ from your account '" + input.get(4)
+						return "Successfully sent " +transferableSum+ "£ from your account '" + input.get(4)
 								+ "' to account " + input.get(2) + ".";
 					}
 					else if (res == "This IBAN does not match any of the receiver's accounts IBAN."){
@@ -161,7 +161,7 @@ public class NewBank {
 					String response = offerLoan(customer, loanName, loanAmount, rate, loanTerm, input.get(1));
 					if (response == "success") {
 						return "Successfully added the loan '" + loanName + "' over " + loanAmount +
-								"$ with a period of " + loanTerm + " days to the ledger of offered loans.\n";
+								"£ with a period of " + loanTerm + " days to the ledger of offered loans.\n";
 					} else {
 						return "Something went wrong. Please, try again later.";
 					}
@@ -180,7 +180,7 @@ public class NewBank {
 						if (loan.getLoanName().equals(input.get(2))){
 							addMoneyToAccount(customer, fundReceivingAccount, loan.getLoanAmount());
 							return "The Loan amount of " + String.valueOf(loan.getLoanAmount()) +
-									"$ was added to the account: '" + fundReceivingAccount + "'. \n" +
+									"£ was added to the account: '" + fundReceivingAccount + "'. \n" +
 									"You have to repay the creditor the above stated Loan amount plus " +
 									"interest within the next " + String.valueOf(loan.getLoanTerm()) + " days.";
 						}
@@ -196,7 +196,7 @@ public class NewBank {
 							//then remove loan from loan list
 							loans.remove(loan);
 							return "Successfully deleted your offered loan: '" + loan.getLoanName() +
-									"' and added the loan amount of " + loan.getLoanAmount() + "$ back to account: '" +
+									"' and added the loan amount of " + loan.getLoanAmount() + "£ back to account: '" +
 									input.get(2) + "'.";
 						}
 					}
@@ -457,7 +457,7 @@ public class NewBank {
 	private String transferToSelf(Account fromAccount, Account toAccount, Double transferableSum) {
 		fromAccount.withdraw(transferableSum);
 		toAccount.deposit(transferableSum);
-		return "Successfully transferred " + String.valueOf(transferableSum) + "$ from account '" + fromAccount.getAccountName()
+		return "Successfully transferred " + String.valueOf(transferableSum) + "£ from account '" + fromAccount.getAccountName()
 				+ "' to account '" + toAccount.getAccountName() + "'.";
 	}
 
@@ -468,6 +468,6 @@ public class NewBank {
 		Account account = customers.get(customer.getUserName()).getAccount(accountName);
 		double balance = account.getCurrentBalance();
 		account.setAmount(balance+amount);
-		return "Successfully added " + amount + "$ to account: '" + accountName + "'.";
+		return "Successfully added " + amount + "£ to account: '" + accountName + "'.";
 	}
 }
