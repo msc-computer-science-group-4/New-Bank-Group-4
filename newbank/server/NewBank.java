@@ -31,7 +31,7 @@ public class NewBank {
 		}
 		thisCustomer.addAccount(new Account(accountType, accountName, amount));
 		return "Successfully created a new " + String.valueOf(accountType) + " named '" + accountName +
-				"' with an initial balance of " + String.valueOf(amount) + "$.";
+				"' with an initial balance of " + String.valueOf(amount) + "£.";
 	}
 
 	public void addTestData() {
