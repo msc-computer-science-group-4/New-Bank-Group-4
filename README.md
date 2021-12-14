@@ -44,7 +44,7 @@ We have a weekly 30 minute video calls to go over the changes of roles within th
 
 # Application setup and navigation
 
-In this section we will walk you through how to navigate within the app.
+In this section we will walk you through how to setup and navigate through the New Bank Java application.
 
 ## Setup Google Authentication
 
