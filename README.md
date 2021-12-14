@@ -129,7 +129,7 @@ To create a new bank account follow the below steps:
 
 ### Displaying all bank accounts
 
-For the displaying of bank accounts we have implemented an IBAN method which associatesa customer with a custom bank account id as soon as the customer creates a bank account. To see how the customer can view their bank account/s, please follow the below steps:
+For the displaying of bank accounts we have implemented an IBAN method which associates customer with a custom bank account id as soon as the customer creates a bank account. To see how the customer can view their bank account/s, please follow the below steps:
 
 1. From the user command enter `1` 
 2. You should now be presented with a list of created bank accounts including their IBAN
