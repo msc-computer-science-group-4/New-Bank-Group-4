@@ -99,7 +99,7 @@ In this intance we are going to demonstrate how to sign in with an existing acco
 
 The following user input and navigation is implemented within the run() method within the server/NewBankClientHandler.java class
 
-Majority of the methods for these commands are based in the server/NewBankClient.java class, however there are some that are implemented in other classes.
+Majority of the methods for these commands are based in the server/NewBankClient.java and server/NewBank.java classes, however there are some that are implemented in other classes.
 
 1. Show My Accounts - Java method associated to it: showMyAccounts()
 2. Transfer to another user - Java method associated to it: transferToUser()
