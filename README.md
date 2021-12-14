@@ -147,3 +147,54 @@ For the displaying of bank accounts we have implemented an IBAN method which ass
 8. You will then be redirected to the user commands menu 
 
 ### Loan feature
+
+#### Show NewBank Loan Ledger
+
+When entering the value `7` from the logged in user commands menu, you will be redirected to a terminal which gives the option to the user to view the offered loans to taken out loans.
+
+#### Offer Loan
+
+In this instance, the customer can offer a loan and be a creditor. The loan that they offer will be taken from any account that has funds within it. To use this feature follow these steps:
+
+1. From the user logged in menu input the value `8` and press enter
+2. Choose the account you would like to offer a loan from and press enter
+3. Input the amount you would like to offer (e.g. 5000) and press enter
+4. Input the interest rate you'de like to charge (0.035 means 3.5% interest)
+5. Input the loan term (number of days) and press enter
+6. You should receive a success message that the loan has been offered and be redirected to the user logged in menu page
+
+#### Take out Loan
+
+The user is able to take out the loan that is offered to them. A guard has been put in so that the user does not take out a loan that they've offered already. We have added some hardcoded test data so that a user is able to take out a loan. To take out a loan, do the following:
+
+1. From the user logged in menu input the value `9` and press enter
+2. Input the ID of the loan you would like to take and press enter
+3. Input the ID of the bank account you want the loan to be transferred into and press enter
+4. You should then be presented a message similar to this:
+      
+       You have successfully taken out the loan with the Name: 'loan-spareuser-2021-12-09'.
+       The Loan amount of ****.*£ was added to the account: 'Main'. 
+       You have to repay the creditor a total amount of ****.**£ by YY-MM-DD.
+       
+5. You should then be be redirected to the user logged in menu page
+
+#### Withdraw a Loan Offer
+
+This feature enable the creditor to withdraw any loans that they've offered. In order to withdraw an offer please execute the following:
+
+1. From the user logged in menu input the value `10` and press enter
+2. Input the loan ID you want to withdraw from the list of offered loans
+3. Input the account ID you would like to add the funds back to
+4. You should get a success message the that funds have been added back to the selected account
+5. You should be redirected back to the the user logged in menu
+
+#### Repay Loan
+
+This feature allows the user to repay the loan back to the creditor. To use this feature follow these steps below:
+
+1. From the user logged in menu input the value `11` and press enter
+2. You will be presented with a tabular list that specifies the loans that you can repay
+3. Input the loan repayment ID and press enter
+4. Enter the bank account ID you want to repay the loan from
+5. Enter the amount you want to pay back
+6. You should get a success message that you have paid off the amount specified
