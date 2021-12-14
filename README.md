@@ -111,7 +111,7 @@ Majority of the methods for these commands are based in the server/NewBankClient
 8. Offer loan - Java method associated to it - Java method associated to it: offerLoan() (based within the server/NewBank.java class)
 9. Take out a Loan - Java method associated to it - Java methods associated to it: selectLoanToTakeOut() (based within server/NewBankClientHandler.java) & addMoneyToAccount() (based within server/NewBank.java)
 10. Withdraw a Loan Offer - Java method associated to it - selectMyOfferedLoan() (based within server/NewBankClientHandler.java) & addMoneyToAccount() (based within server/NewBank.java)
-11. Repay a Loan - Java Method associated to it repayLoan() within server/NewBank.java class
+11. Repay a Loan - Java Method associated to it - repayLoan() (based within server/NewBank.java)
 12. Log out - Conditional within the run() method
 
 ### Create New Bank Account command
