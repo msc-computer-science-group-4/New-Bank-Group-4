@@ -92,7 +92,7 @@ public class Customer {
 			}
 			s += "      " + a.getAccountType() + " ";
 			s += "        ";
-			s += a.getCurrentBalance();
+			s += a.getCurrentBalance() + "£  ";
 			s += "        ";
 			s += a.getIBAN();
 			s += "\n";
