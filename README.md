@@ -140,7 +140,7 @@ For the displaying of bank accounts we have implemented an IBAN method which ass
 
 1. From the list of user commands enter the value `2`
 2. Enter the username of receiver username which has already been created and has a bank account (e.g. receiverUser) and press enter
-3. Enter the IBAN of the receiver you want to transfer funds to and press enter
+3. Enter the IBAN of the receiver bank account you want to transfer funds to and press enter
 4. Enter your own IBAN number you want to transfer funds from (enter the numbered list value, not the actual IBAN number)
 5. Enter the amount you want to transfer 
 6. Open you Google Authenticator app and enter the 6 digit number presented to you on the terminal and press enter
