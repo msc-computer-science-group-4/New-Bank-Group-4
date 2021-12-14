@@ -119,10 +119,12 @@ To create a new bank account follow the below steps:
 
 1. From the list of user commands enter `4` to create a new bank account and press enter
 2. Enter `1` to create a current account
-3. Enter a customised name you can remember your current account (e.g. example current account) and press enter
+3. Enter a customised name you can remember your current account (e.g. example-currect-account) and press enter
 4. Enter an amount that you would like to deposit within the account (e.g. 7000) and press enter
 5. Then you should get a message similar to this `Successfully created a new Current Account named 'Example Current Account' with an initial balance of 7000.0£`
-6. You will then be returned to the list of customer commands
+6. You will then be returned to the list of customer commands.
+
+**Note: When adding a custom name to your bank account, make sure there's no spaces in between the characters**
 
 ### Displaying all bank accounts
 
