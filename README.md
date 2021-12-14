@@ -131,7 +131,17 @@ For the displaying of bank accounts we have implemented an IBAN method which ass
 1. From the user command enter `1` 
 2. You should now be presented with a list of created bank accounts including their IBAN
 3. If you wish to transfer or add funds between on account to another (external or to self), please make sure you keep a note of the sender and receiver IBAN
+4. You will be shortly redirected back to the user logged in menu
 
 ### Transfer to another user
+
+1. From the list of user commands enter the value `2`
+2. Enter the username of receiver username which has already been created and has a bank account (e.g. receiverUser) and press enter
+3. Enter the IBAN of the receiver you want to transfer funds to and press enter
+4. Enter your own IBAN number you want to transfer funds from (enter the numbered list value, not the actual IBAN number)
+5. Enter the amount you want to transfer 
+6. Open you Google Authenticator app and enter the 6 digit number presented to you on the terminal and press enter
+7. You should be presented with a similar message like this: `Successfully sent 3.0£ from your account 'ExampleAccount' to account GB24NWBK99999974358045.`
+8. You will then be redirected to the user commands menu 
 
 ### Loan feature
