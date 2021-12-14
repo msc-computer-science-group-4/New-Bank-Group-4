@@ -105,7 +105,7 @@ Majority of the methods for these commands are based in the server/NewBankClient
 2. Transfer to another user - Java method associated to it: transferToUser()
 3. Transfer to another owned account - Java method associated to it transferToSelf()
 4. Create New Account - Java method associated to it createLoginAccount()
-5. Close an Account - Java method associated to it  - Java method associated to it: closeAccount() (based within the server/Customer.java class)
+5. Close an Account - Java method associated to it: closeAccount() (based within the server/Customer.java class)
 6. Add Funds to an Account - Java method associated to it addMoneyToAccount() (based within the server/NewBank.java class)
 7. Show NewBank Loan Ledger (all customers) - Java method associated to it: loansToString() in server/NewBank.java
 8. Offer loan - Java method associated to it - Java method associated to it: offerLoan()
