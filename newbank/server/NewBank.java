@@ -35,16 +35,26 @@ public class NewBank {
 	}
 
 	public void addTestData() {
+		// testuser
 		Customer test = new Customer("test", "testuser", "Test1234#");
-
 		test.addAccount(new Account("Current Account", "Main", 1000.0));
 		test.addAccount(new Account("Savings Account", "Savings", 1500.0));
 		test.addAccount(new Account("Current Account", "Checking", 250.0));
+		loans.add(new Loan("loan-testuser-2021-12-05", 10000.0, 10, 0.05, "testuser", "Main"));
+		loans.add(new Loan("loan-testuser-2021-12-03", 20000.0, 20, 0.09, "testuser", "Savings"));
 
-		loans.add(new Loan("loan-testuser-2021-12-05", 10000.0, 10, 0.05, "testuser"));
-		loans.add(new Loan("loan-testuser-2021-12-03", 20000.0, 20, 0.09, "testuser"));
+		// spareuser
+		Customer spare = new Customer("spare user", "spareuser", "Spare@4567");
+		spare.addAccount(new Account("Current Account", "Main", 4500.0));
+		spare.addAccount(new Account("Savings Account", "Savings", 12350.0));
+		spare.addAccount(new Account("Current Account", "Investing", 4800.0));
+		loans.add(new Loan("loan-spareuser-2021-12-14", 2100.0, 34, 0.032, "spareuser", "Main"));
+		loans.add(new Loan("loan-spareuser-2021-12-09", 7200.0, 18, 0.07, "spareuser", "Savings"));
+		loans.add(new Loan("loan-spareuser-2021-12-13", 250.0, 8, 0.04, "spareuser", "Savings"));
 
 		customers.put(test.getCustomerID().getUserName(), test);
+		customers.put(spare.getCustomerID().getUserName(), spare);
+
 	}
 
 	public static NewBank getBank() {
@@ -94,11 +104,34 @@ public class NewBank {
 				case "DISPLAYSELECTABLEACCOUNTS" :
 					return showMyAccounts(customer);
 
+
+				case "USERHASPOSTEDLOANS":
+					int usersLoans = 0;
+					for(Loan loan : loans){
+						if(loan.getCreditorUserName().equals(input.get(1))){
+							usersLoans += 1;
+						}
+					}
+					if(usersLoans != 0){
+						return "TRUE";
+					}
+					return "FALSE";
+
+				case "USERHASREPAYABLELOANS":
+					int repayableLoans = 0;
+					for(Loan loan : loans){
+						if(loan.getBorrowerName().equals(input.get(1))){
+							repayableLoans += 1;
+						}
+					}
+					if(repayableLoans != 0){
+						return "TRUE";
+					}
+					return "FALSE";
+
+
 				case "DISPLAYSELECTEDNAMEACCOUNT":
 					return getSelectedAccountName(customer, Integer.parseInt(input.get(1)));
-
-				case "DISPLAYSELECTEDLOANNAME":
-					return getSelectedLoanName(Integer.parseInt(input.get(1)));
 
 				case "NUMBEROFUSERACCOUNTS":
 					return String.valueOf(currentCustomer.getAccounts().size());
@@ -111,6 +144,36 @@ public class NewBank {
 						}
 					}
 					return String.valueOf(numberOfOfferedLoans);
+
+				case "NUMBEROFAVAILABLELOANS":
+					String currentUsername = input.get(1);
+					int numberOfAvailableLoans = 0;
+					for (Loan loan : loans){
+						if (!loan.getCreditorUserName().equals(currentUsername) && !loan.getBorrowerName().equals(currentUsername)){
+							numberOfAvailableLoans += 1;
+						}
+					}
+					return String.valueOf(numberOfAvailableLoans);
+
+				case "NUMBEROFUSERTAKENLOANS":
+					String borrowerName = input.get(1);
+					int numberOfUserTakenLoans = 0;
+					for (Loan loan : loans){
+						if (loan.borrowerName.equals(borrowerName)){
+							numberOfUserTakenLoans += 1;
+						}
+					}
+					return String.valueOf(numberOfUserTakenLoans);
+
+				case "NUMBEROFUSEROFFEREDLOANS":
+					String creditorName = input.get(1);
+					int numberOfUserOfferedLoans = 0;
+					for (Loan loan : loans){
+						if (loan.getCreditorUserName().equals(creditorName)){
+							numberOfUserOfferedLoans += 1;
+						}
+					}
+					return String.valueOf(numberOfUserOfferedLoans);
 
 				case "4" : return createNewAccount(customer, request);
 
@@ -178,31 +241,63 @@ public class NewBank {
 					String fundReceivingAccount = input.get(1);
 					for (Loan loan : loans){
 						if (loan.getLoanName().equals(input.get(2))){
-							addMoneyToAccount(customer, fundReceivingAccount, loan.getLoanAmount());
-							return "The Loan amount of " + String.valueOf(loan.getLoanAmount()) +
+							addMoneyToAccount(customer, fundReceivingAccount, loan.getPrincipalAmount());
+							return "The Loan amount of " + loan.getPrincipalAmount() +
 									"£ was added to the account: '" + fundReceivingAccount + "'. \n" +
-									"You have to repay the creditor the above stated Loan amount plus " +
-									"interest within the next " + String.valueOf(loan.getLoanTerm()) + " days.";
+									"You have to repay the creditor a total amount of " +
+									String.format("%.2f", loan.getInitialPayoffAmount()) + "£ by " + loan.getDeadline() + ".";
 						}
 					}
 					return "fail";
 
 				case "WITHDRAWLOAN":
 					for (Loan loan : loans){
-						if (loan.getLoanName().equals(input.get(1)) && loan.getborrowerName().equals("NONE")){
+						if (loan.getLoanName().equals(input.get(1)) && loan.getBorrowerName().equals("NONE")){
 							// add withheld money back to creditors account
 							//Account refundAccount = currentCustomer.getAccount(input.get(2));
-							addMoneyToAccount(customer, input.get(2), loan.getLoanAmount());
+							addMoneyToAccount(customer, input.get(2), loan.getPrincipalAmount());
 							//then remove loan from loan list
 							loans.remove(loan);
 							return "Successfully deleted your offered loan: '" + loan.getLoanName() +
-									"' and added the loan amount of " + loan.getLoanAmount() + "£ back to account: '" +
+									"' and added the loan amount of " + loan.getPrincipalAmount() + "£ to the account: '" +
 									input.get(2) + "'.";
 						}
 					}
 					return "fail";
 
+				case "PAYABLEAMOUNT":
+					return String.valueOf(Objects.requireNonNull(getCurrentLoan(input.get(1))).getPayoffAmount());
 
+				case "SHOWCURRENTUSERTAKENLOANS":
+					// show only the current customers taken loans
+					return customerTakenLoansToString(customer);
+
+				case "SHOWCURRENTUSEROFFEREDLOANS":
+					// show only the current customers offered loans
+					return customerOfferedLoansToString(customer);
+
+				case "SHOWAVAILABLELOANS":
+					// show all loans that the current user can take out
+					return availableLoansToString(customer);
+
+				case "REPAYLOAN":
+					Loan loanToRepay = Objects.requireNonNull(getCurrentLoan(input.get(1)));
+					Double repayAmount = Double.parseDouble(input.get(2));
+					Customer creditor = customers.get(loanToRepay.getCreditorUserName());
+					String borrowerAccountName = input.get(3);
+					String creditorAccountName = loanToRepay.getCreditorAccountName();
+
+					String loanResponse = repayLoan(currentCustomer, creditor, repayAmount, borrowerAccountName, creditorAccountName, loanToRepay);
+
+					if (loanResponse.equals("success")) {
+						return "\nSuccessfully transferred " +repayAmount+ "£ from your account '" + borrowerAccountName
+								+ "' to the creditors NewBank account.\n" + "The remaining amount to repay until the " +
+								loanToRepay.getDeadline() + " is " + loanToRepay.getPayoffAmount() + "£.";
+					}
+					else if(loanResponse.equals("paid off")){
+						return "\nYou have successfully paid off the entire loan amount! This loan will now be deleted.";
+					}
+					return "\nSomething went wrong. Please, try again later.";
 
 				default : return "FAIL";
 
@@ -321,22 +416,16 @@ public class NewBank {
 	}
 
 	/**
-	 * This method searches for the selected Loan by index and returns the name of the found Loan
-	 */
-	private String getSelectedLoanName(Integer loanIndex) {
-		return loans.get(loanIndex).getLoanName();
-	}
-
-
-	/**
 	 * This method returns table of offered (all loans that haven't been taken yet) or taken loans.
 	 */
 	public String loansToString(String type) {
 		String loanNameHeading = "Loan Name";
 		String loanAmountHeading = "Loan Amount";
-		String loanTermHeading = "Loan Term";
-		String loanRateHeading = "Interest Rate";
-		String loanCreditorHeading = "Creditor";
+		String loanTermHeading = "Total Loan Term (days)";
+		String loanRateHeading = "Monthly Interest Rate";
+		String totalLoanRateHeading = "Total Interest Rate";
+		String payableAmountHeading = "Amount to Repay";
+		String loanCreditorHeading = "Creditor Username";
 		String s = ""; // the output variable of this function
 
 		// if barrowerName is equal NONE in a loan then it's a loan that could be offered.
@@ -344,7 +433,7 @@ public class NewBank {
 		int longestLoanNameCount=loanNameHeading.length();
 		ArrayList<Loan> loanList = new ArrayList<>();
 		for(Loan l : loans) {
-			String barrowerName = l.getborrowerName();
+			String barrowerName = l.getBorrowerName();
 			if ((barrowerName.equals("NONE") && type.equals("offered")) || (!barrowerName.equals("NONE") && type.equals("taken"))) {
 				loanList.add(l);
 			}
@@ -371,12 +460,23 @@ public class NewBank {
 			loanRateHeading += " ";
 		}
 
+		int longestTotalRateCount=totalLoanRateHeading.length();
+		for(int i=0; i<longestTotalRateCount-3; i++){
+			totalLoanRateHeading += " ";
+		}
+
+		int payableAmountCount=payableAmountHeading.length();
+		for(int i=0; i<payableAmountCount-3; i++){
+			payableAmountHeading += " ";
+		}
+
 		int longestCreditorCount=loanCreditorHeading.length();
 		for(int i=0; i<longestCreditorCount-3; i++){
 			loanCreditorHeading += " ";
 		}
 
-		s += loanNameHeading+"        "+loanAmountHeading+"        "+loanTermHeading+"        "+loanRateHeading+"        "+loanCreditorHeading+"\n";
+		s += loanNameHeading+"        "+loanAmountHeading+"        "+loanTermHeading+"        "+loanRateHeading+"        "+
+				totalLoanRateHeading+"        "+payableAmountHeading+"        "+ loanCreditorHeading+"\n";
 
 		// Divider
 		int dividerLength = s.length();
@@ -392,11 +492,15 @@ public class NewBank {
 			for(int i = 0; i<longestLoanNameCount-l.getLoanName().length(); i++){
 				s += " ";
 			}
-			s += "      " + l.getLoanAmount() + " ";
+			s += "      " + l.getPrincipalAmount() + "£  ";
 			s += "        ";
 			s += l.getLoanTerm();
 			s += "        ";
-			s += l.getLoanInterestRate();
+			s += l.getMonthlyInterestRate();
+			s += "        ";
+			s += String.format("%.4f", l.getTotalInterestRate());
+			s += "        ";
+			s += String.format("%.2f", l.getPayoffAmount()) + "£  ";
 			s += "        ";
 			s += l.getCreditorUserName();
 			s += "\n";
@@ -413,7 +517,7 @@ public class NewBank {
 			String userName =  customer.getUserName();
 
 			//new offer adds to NewBank list - loans
-			loans.add(new Loan(loanName, loanAmount, loanTerm, rate, userName));
+			loans.add(new Loan(loanName, loanAmount, loanTerm, rate, userName, accountName));
 
 			//after the offer is ready, the bank writes off the customers' money
 			Account account = customers.get(customer.getUserName()).getAccount(accountName);
@@ -434,21 +538,49 @@ public class NewBank {
 	private String transferToUser(Customer currentCustomer, Customer receiver, Double transferableSum, String CustomerAccountName, String receiverIban) {
 		try {
 			Account fromAccount = currentCustomer.getAccount(CustomerAccountName);
-			Double balanceFromAccount = fromAccount.getCurrentBalance();
 			Account toAccount = receiver.getAccountIBAN(receiverIban);
-
 			if (toAccount == null){
 				return "This IBAN does not match any of the receiver's accounts IBAN.";
 			}
-			Double balanceToAccount = toAccount.getCurrentBalance();
-			fromAccount.setAmount(balanceFromAccount-transferableSum);
-			toAccount.setAmount(balanceToAccount+transferableSum);
+
+			fromAccount.withdraw(transferableSum);
+			toAccount.deposit(transferableSum);
 			return "success";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "fail";
 		}
 	}
+
+
+	/**
+	 * This method finds the account of the current customer and the recipient's account,
+	 * after which the balances of these accounts are updated
+	 */
+	private String repayLoan(Customer borrower, Customer creditor, Double payoffAmount, String borrowerAccountName, String creditorAccountName, Loan loan) {
+		try {
+			Account borrowerAccount = borrower.getAccount(borrowerAccountName);
+			Account creditorAccount = creditor.getAccount(creditorAccountName);
+			borrowerAccount.withdraw(payoffAmount);
+			creditorAccount.deposit(payoffAmount);
+
+			// after adjusting borrowers and creditor account balance, check and update the remaining payabale amount
+			loan.adjustPayableAmount(payoffAmount);
+
+			if(loan.getPayoffAmount() == 0){
+				// if nothing is left to pay off remove loan from loan list
+				loans.remove(loan);
+				return "paid off";
+			}
+			else {
+				return "success";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "fail";
+		}
+	}
+
 
 	/**
 	 * This method works similarly to the above method but is for transferring between accounts for the same user. This
@@ -470,4 +602,298 @@ public class NewBank {
 		account.setAmount(balance+amount);
 		return "Successfully added " + amount + "£ to account: '" + accountName + "'.";
 	}
+
+
+	/**
+	 * This method returns table of taken loans by the current user only.
+	 */
+	public String customerTakenLoansToString(CustomerID customer) {
+		String loanNameHeading = "Loan Name";
+		String loanAmountHeading = "Loan Amount";
+		String loanTermHeading = "Total Loan Term (days)";
+		String loanRateHeading = "Monthly Interest Rate";
+		String totalLoanRateHeading = "Total Interest Rate";
+		String payableAmountHeading = "Amount to Repay";
+		String loanCreditorHeading = "Creditor Username";
+		String s = ""; // the output variable of this function
+
+		// if barrowerName isn't equal NONE in a loan then it's a loan that has been taken.
+		int longestLoanNameCount=loanNameHeading.length();
+		ArrayList<Loan> loanList = new ArrayList<>();
+		for(Loan l : loans) {
+			// Only show loan item for current user
+			if ((l.getBorrowerName().equals(customer.getUserName()))) {
+				loanList.add(l);
+			}
+		}
+
+		for(Loan l : loanList) {
+			if(l.getLoanName().length() > longestLoanNameCount) {
+				longestLoanNameCount = l.getLoanName().length();
+			}
+		}
+
+		int longestAmountCount=loanAmountHeading.length();
+		for(int i=0; i<longestAmountCount-5; i++){
+			loanAmountHeading += " ";
+		}
+
+		int longestTermCount=loanTermHeading.length();
+		for(int i=0; i<longestTermCount-1; i++){
+			loanTermHeading += " ";
+		}
+
+		int longestRateCount=loanRateHeading.length();
+		for(int i=0; i<longestRateCount-3; i++){
+			loanRateHeading += " ";
+		}
+
+		int longestTotalRateCount=totalLoanRateHeading.length();
+		for(int i=0; i<longestTotalRateCount-3; i++){
+			totalLoanRateHeading += " ";
+		}
+
+		int payableAmountCount=payableAmountHeading.length();
+		for(int i=0; i<payableAmountCount-3; i++){
+			payableAmountHeading += " ";
+		}
+
+		int longestCreditorCount=loanCreditorHeading.length();
+		for(int i=0; i<longestCreditorCount-3; i++){
+			loanCreditorHeading += " ";
+		}
+
+		s += loanNameHeading+"        "+loanAmountHeading+"        "+loanTermHeading+"        "+loanRateHeading+"        "+
+				totalLoanRateHeading+"        "+payableAmountHeading+"        "+loanCreditorHeading+"\n";
+
+		// Divider
+		int dividerLength = s.length();
+		for(int i=0; i<dividerLength; i++){
+			s += "-";
+		}
+		s += "\n";
+
+		// Accounts detail
+		int counter = 1;
+		for(Loan l : loanList) {
+			s += counter + "." + l.getLoanName();
+			for(int i = 0; i<longestLoanNameCount-l.getLoanName().length(); i++){
+				s += " ";
+			}
+			s += "      " + l.getPrincipalAmount() + "£  ";
+			s += "        ";
+			s += l.getLoanTerm();
+			s += "        ";
+			s += l.getMonthlyInterestRate();
+			s += "        ";
+			s += String.format("%.4f", l.getTotalInterestRate());
+			s += "        ";
+			s += String.format("%.2f", l.getPayoffAmount()) + "£  ";
+			s += "        ";
+			s += l.getCreditorUserName();
+			s += "\n";
+			counter+=1;
+		}
+		// return output
+		return s; }
+
+
+	/**
+	 * This method returns table of offered loans by the current user only
+	 */
+	public String customerOfferedLoansToString(CustomerID customer) {
+		String loanNameHeading = "Loan Name";
+		String loanAmountHeading = "Loan Amount";
+		String loanTermHeading = "Total Loan Term (days)";
+		String loanRateHeading = "Monthly Interest Rate";
+		String totalLoanRateHeading = "Total Interest Rate";
+		String payableAmountHeading = "Amount to Repay";
+		String loanCreditorHeading = "Creditor Username";
+		String s = ""; // the output variable of this function
+
+		// if barrowerName isn't equal NONE in a loan then it's a loan that has been taken.
+		int longestLoanNameCount=loanNameHeading.length();
+		ArrayList<Loan> loanList = new ArrayList<>();
+		for(Loan l : loans) {
+			// Only show loan item for current user
+			if ((l.getCreditorUserName().equals(customer.getUserName()))) {
+				loanList.add(l);
+			}
+		}
+
+		for(Loan l : loanList) {
+			if(l.getLoanName().length() > longestLoanNameCount) {
+				longestLoanNameCount = l.getLoanName().length();
+			}
+		}
+
+		int longestAmountCount=loanAmountHeading.length();
+		for(int i=0; i<longestAmountCount-5; i++){
+			loanAmountHeading += " ";
+		}
+
+		int longestTermCount=loanTermHeading.length();
+		for(int i=0; i<longestTermCount-1; i++){
+			loanTermHeading += " ";
+		}
+
+		int longestRateCount=loanRateHeading.length();
+		for(int i=0; i<longestRateCount-3; i++){
+			loanRateHeading += " ";
+		}
+
+		int longestTotalRateCount=totalLoanRateHeading.length();
+		for(int i=0; i<longestTotalRateCount-3; i++){
+			totalLoanRateHeading += " ";
+		}
+
+		int payableAmountCount=payableAmountHeading.length();
+		for(int i=0; i<payableAmountCount-3; i++){
+			payableAmountHeading += " ";
+		}
+
+		int longestCreditorCount=loanCreditorHeading.length();
+		for(int i=0; i<longestCreditorCount-3; i++){
+			loanCreditorHeading += " ";
+		}
+
+		s += loanNameHeading+"        "+loanAmountHeading+"        "+loanTermHeading+"        "+loanRateHeading+"        "+
+				totalLoanRateHeading+"        "+payableAmountHeading+"        "+loanCreditorHeading+"\n";
+
+		// Divider
+		int dividerLength = s.length();
+		for(int i=0; i<dividerLength; i++){
+			s += "-";
+		}
+		s += "\n";
+
+		// Accounts detail
+		int counter = 1;
+		for(Loan l : loanList) {
+			s += counter + "." + l.getLoanName();
+			for(int i = 0; i<longestLoanNameCount-l.getLoanName().length(); i++){
+				s += " ";
+			}
+			s += "      " + l.getPrincipalAmount() + "£  ";
+			s += "        ";
+			s += l.getLoanTerm();
+			s += "        ";
+			s += l.getMonthlyInterestRate();
+			s += "        ";
+			s += String.format("%.4f", l.getTotalInterestRate());
+			s += "        ";
+			s += String.format("%.2f", l.getPayoffAmount()) + "£  ";
+			s += "        ";
+			s += l.getCreditorUserName();
+			s += "\n";
+			counter+=1;
+		}
+		// return output
+		return s; }
+
+
+	/**
+	 * This method returns table of loans that the current user can take out
+	 */
+	public String availableLoansToString(CustomerID customer) {
+		String loanNameHeading = "Loan Name";
+		String loanAmountHeading = "Loan Amount";
+		String loanTermHeading = "Total Loan Term (days)";
+		String loanRateHeading = "Monthly Interest Rate";
+		String totalLoanRateHeading = "Total Interest Rate";
+		String payableAmountHeading = "Amount to Repay";
+		String loanCreditorHeading = "Creditor Username";
+		String s = ""; // the output variable of this function
+
+		// if barrowerName isn't equal NONE in a loan then it's a loan that has been taken.
+		int longestLoanNameCount=loanNameHeading.length();
+		ArrayList<Loan> loanList = new ArrayList<>();
+		for(Loan l : loans) {
+			// Only show loan item for current user
+			if (!l.getCreditorUserName().equals(customer.getUserName()) && !l.getBorrowerName().equals(customer.getUserName())) {
+				loanList.add(l);
+			}
+		}
+
+		for(Loan l : loanList) {
+			if(l.getLoanName().length() > longestLoanNameCount) {
+				longestLoanNameCount = l.getLoanName().length();
+			}
+		}
+
+		int longestAmountCount=loanAmountHeading.length();
+		for(int i=0; i<longestAmountCount-5; i++){
+			loanAmountHeading += " ";
+		}
+
+		int longestTermCount=loanTermHeading.length();
+		for(int i=0; i<longestTermCount-1; i++){
+			loanTermHeading += " ";
+		}
+
+		int longestRateCount=loanRateHeading.length();
+		for(int i=0; i<longestRateCount-3; i++){
+			loanRateHeading += " ";
+		}
+
+		int longestTotalRateCount=totalLoanRateHeading.length();
+		for(int i=0; i<longestTotalRateCount-3; i++){
+			totalLoanRateHeading += " ";
+		}
+
+		int payableAmountCount=payableAmountHeading.length();
+		for(int i=0; i<payableAmountCount-3; i++){
+			payableAmountHeading += " ";
+		}
+
+		int longestCreditorCount=loanCreditorHeading.length();
+		for(int i=0; i<longestCreditorCount-3; i++){
+			loanCreditorHeading += " ";
+		}
+
+		s += loanNameHeading+"        "+loanAmountHeading+"        "+loanTermHeading+"        "+loanRateHeading+"        "+
+				totalLoanRateHeading+"        "+payableAmountHeading+"        "+loanCreditorHeading+"\n";
+
+		// Divider
+		int dividerLength = s.length();
+		for(int i=0; i<dividerLength; i++){
+			s += "-";
+		}
+		s += "\n";
+
+		// Accounts detail
+		int counter = 1;
+		for(Loan l : loanList) {
+			s += counter + "." + l.getLoanName();
+			for(int i = 0; i<longestLoanNameCount-l.getLoanName().length(); i++){
+				s += " ";
+			}
+			s += "      " + l.getPrincipalAmount() + "£  ";
+			s += "        ";
+			s += l.getLoanTerm();
+			s += "        ";
+			s += l.getMonthlyInterestRate();
+			s += "        ";
+			s += String.format("%.4f", l.getTotalInterestRate());
+			s += "        ";
+			s += String.format("%.2f", l.getPayoffAmount()) + "£  ";
+			s += "        ";
+			s += l.getCreditorUserName();
+			s += "\n";
+			counter+=1;
+		}
+		// return output
+		return s; }
+
+
+	// retrieve loan from loan HashMap
+	private Loan getCurrentLoan(String loanName){
+		for(Loan loan : loans){
+			if(loan.getLoanName().equals(loanName)){
+				return loan;
+			}
+		}
+		return null;
+	}
+
 }
