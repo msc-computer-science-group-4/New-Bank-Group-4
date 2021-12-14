@@ -112,3 +112,26 @@ Majority of the methods for these commands are based in the server/NewBankClient
 9. Take out a Loan - Java method associated to it - Java methods associated to it: selectLoan() and run() within the server/NewBankClientHandler.java
 10. Withdraw a Loan Offer - Java method associated to it - selectLoan() and run() within the server/NewBankClientHandler.java
 11. Log out - Conditional within the run() method
+
+### Create New Account command
+
+To create a new bank account follow the below steps:
+
+1. From the list of user commands enter `4` to create a new bank account and press enter
+2. Enter `1` to create a current account
+3. Enter a customised name you can remember your current account (e.g. example current account) and press enter
+4. Enter an amount that you would like to deposit within the account (e.g. 7000) and press enter
+5. Then you should get a message similar to this `Successfully created a new Current Account named 'Example Current Account' with an initial balance of 7000.0£`
+6. You will then be returned to the list of customer commands
+
+### Displaying all bank accounts
+
+For the displaying of bank accounts we have implemented an IBAN method which associatesa customer with a custom bank account id as soon as the customer creates a bank account. To see how the customer can view their bank account/s, please follow the below steps:
+
+1. From the user command enter `1` 
+2. You should now be presented with a list of created bank accounts including their IBAN
+3. If you wish to transfer or add funds between on account to another (external or to self), please make sure you keep a note of the sender and receiver IBAN
+
+### Transfer to another user
+
+### Loan feature
