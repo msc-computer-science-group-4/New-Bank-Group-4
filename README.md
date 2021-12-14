@@ -133,7 +133,7 @@ For the displaying of bank accounts we have implemented an IBAN method which ass
 
 1. From the user command enter `1` 
 2. You should now be presented with a list of created bank accounts including their IBAN
-3. If you wish to transfer or add funds between on account to another (external or to self), please make sure you keep a note of the sender and receiver IBAN
+3. If you wish to transfer funds to this account from an external account (different username), please make sure you keep a note of the sender and receiver IBAN. You will not need the IBAN in order to transfer between accounts linked to the same username.
 4. You will be shortly redirected back to the user logged in menu
 
 ### Transfer to another user
