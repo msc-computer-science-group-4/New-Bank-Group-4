@@ -113,7 +113,7 @@ Majority of the methods for these commands are based in the server/NewBankClient
 10. Withdraw a Loan Offer - Java method associated to it - selectLoan() and run() within the server/NewBankClientHandler.java
 11. Log out - Conditional within the run() method
 
-### Create New Account command
+### Create New Bank Account command
 
 To create a new bank account follow the below steps:
 
