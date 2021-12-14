@@ -323,6 +323,14 @@ public class NewBankClientHandler extends Thread{
 					String accountName = in.readLine();
 
 
+					while(accountNameSpaceCount(accountName) != 0){
+						// letting user choose an account name
+						out.println("The account name cannot include space symbol!");
+						out.println("Please select a custom name for your account:\n");
+						accountName = in.readLine();
+					}
+
+
 					out.println("Please enter how much you want to deposit to this new account:\n");
 					String amountToAdd = in.readLine();
 
@@ -812,6 +820,15 @@ public class NewBankClientHandler extends Thread{
 		return name;
 	}
 
-
+	public int accountNameSpaceCount(String accountName){
+		// validate that account name includes just one space
+		int spaceCount = 0;
+		for (char c : accountName.toCharArray()) {
+			if (c == ' ') {
+				spaceCount++;
+			}
+		}
+		return spaceCount;
+	}
 
 }
