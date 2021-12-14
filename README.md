@@ -151,7 +151,7 @@ For the displaying of bank accounts we have implemented an IBAN method which ass
 
 #### Show NewBank Loan Ledger
 
-When entering the value `7` from the logged in user commands menu, you will be redirected to a terminal which gives the option to the user to view the offered loans to taken out loans.
+When entering the value `7` from the logged in user commands menu, you will be redirected to a terminal which gives the option to the user to view all offered loans and taken out loans by NewBank customers.
 
 #### Offer Loan
 
